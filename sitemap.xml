@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/</loc>
+    <lastmod>2015-08-22T15:58:42-04:00</lastmod>
+  </url>
+  <url>
     <loc>http://andrewemil.github.io/blog/archives/</loc>
   </url>
   <url>
@@ -8,5 +12,9 @@
   </url>
   <url>
     <loc>http://andrewemil.github.io/about/</loc>
+  </url>
+  <url>
+    <loc>http://andrewemil.github.io/images/2015/1/page.html</loc>
+    <lastmod>2015-08-23T16:09:16-04:00</lastmod>
   </url>
 </urlset>

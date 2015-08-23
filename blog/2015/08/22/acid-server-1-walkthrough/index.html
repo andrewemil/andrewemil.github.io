@@ -1,24 +1,106 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[andrewemil's blog]]></title>
-  <link href="http://andrewemil.github.io/atom.xml" rel="self"/>
-  <link href="http://andrewemil.github.io/"/>
-  <updated>2015-08-23T18:18:50-04:00</updated>
-  <id>http://andrewemil.github.io/</id>
-  <author>
-    <name><![CDATA[Andrew Emil]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Acid Server: 1 Walkthrough - andrewemil's blog</title>
+  <meta name="author" content="Andrew Emil">
 
   
-  <entry>
-    <title type="html"><![CDATA[Acid Server: 1 Walkthrough]]></title>
-    <link href="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/"/>
-    <updated>2015-08-22T15:58:42-04:00</updated>
-    <id>http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough</id>
-    <content type="html"><![CDATA[<p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">Avinash</a>
+  <meta name="description" content="Acid Server is a boot2root challenge built by Avinash
+and hosted by vulnhub.
+The challenge is completely focused on web exploitation and the end goal &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="andrewemil's blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-66628481-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    _gaq.push(['_setAccount', 'UA-66628481-1']);
+    _gaq.push(['_setDomainName','github.io']);
+    _gaq.push(['_trackPageview']);
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">andrewemil's blog</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="andrewemil.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Acid Server: 1 Walkthrough</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-22T15:58:42-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>3:58 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">Avinash</a>
 and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.
 The challenge is completely focused on web exploitation and the end goal is to escalate the privileges to root and capture the flag.
 This walkthrough shows how I solved the challenge so let the fun begin!</p>
@@ -144,21 +226,21 @@ This walkthrough shows how I solved the challenge so let the fun begin!</p>
 
 <p>Nmap found that apache web server was running on port 33447,so lets visit the main index page for the web service <a href="http://192.168.2.102:33447/">http://192.168.2.102:33447/</a></p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 1.png"></p>
+<p><img class="center" src="/images/2015/1/image 1.png"></p>
 
 <p>It seems that there isn&rsquo;t anything useful here, so my next destination was dirbuster to find any hidden directories or files that might be interesting:</p>
 
 <p>Note:I used directory-list-2.3-medium.txt wordlist which is located in /usr/share/dirbuster/wordlist/</p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 2.png"></p>
+<p><img class="center" src="/images/2015/1/image 2.png"></p>
 
 <p>So, Dirbuster found a new directory named &ldquo;Challenge&rdquo;, and the index page &ldquo;<a href="http://192.168.2.102:33447/Challenge/js/index.js">http://192.168.2.102:33447/Challenge/js/index.js</a>&rdquo; of this directory is a login form as we can see:</p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 3.png"></p>
+<p><img class="center" src="/images/2015/1/image 3.png"></p>
 
 <p>Lets examine the page source to see if we can identify the script behind this login form:</p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 4.png"></p>
+<p><img class="center" src="/images/2015/1/image 4.png"></p>
 
 <p>And examining form.js script as well:</p>
 
@@ -189,23 +271,23 @@ is configured with a default user &ldquo;test_user&rdquo; as you can see in the 
 
 <p><a href="http://192.168.2.102:33447/Challenge/protected_page.php">http://192.168.2.102:33447/Challenge/protected_page.php</a></p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 5.png"></p>
+<p><img class="center" src="/images/2015/1/image 5.png"></p>
 
 <p>We can see session cookie assigned using <a href="https://addons.mozilla.org/ar/firefox/addon/live-http-headers/">Live Http Headers</a> firefox add-on:</p>
 
 <p>Set-Cookie: sec_session_id=64uk8pthsvr3939mm9joa5u254; path=/; HttpOnly</p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 6.png"></p>
+<p><img class="center" src="/images/2015/1/image 6.png"></p>
 
 <p><a href="http://192.168.2.102:33447/Challenge/include.php">http://192.168.2.102:33447/Challenge/include.php</a></p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 7.png"></p>
+<p><img class="center" src="/images/2015/1/image 7.png"></p>
 
 <p>Reading /etc/passwd</p>
 
 <p><a href="http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File">http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File</a></p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 8.png"></p>
+<p><img class="center" src="/images/2015/1/image 8.png"></p>
 
 <p>At this point, I tried to get RCE using the LFI vulnerability by using apache log poisining, reading /proc/self/environ, or any logs in the file descriptor.
 But it seems the apache user doesn&rsquo;t have any read access on those files and only php://filter wrappter worked which is very useful to further enumerate
@@ -461,7 +543,7 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 <p>Visit:
 <a href="http://192.168.2.102:33447/Challenge/hacked.php">http://192.168.2.102:33447/Challenge/hacked.php</a></p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 9.png"></p>
+<p><img class="center" src="/images/2015/1/image 9.png"></p>
 
 <p>source of hacked.php:</p>
 
@@ -591,7 +673,7 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 
 <p>id=&lsquo;)) UNION SELECT 1,&ldquo;&lt;?php system($_GET['cmd&rsquo;]); ?>&rdquo;,3,4,5 INTO OUTFILE &lsquo;/tmp/shell.php&rsquo;&ndash;</p>
 
-<p><img class="center" src="http://andrewemil.github.io/images/2015/1/image 10.png"></p>
+<p><img class="center" src="/images/2015/1/image 10.png"></p>
 
 <p>or cURL</p>
 
@@ -811,7 +893,124 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 
 
 
-]]></content>
-  </entry>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-</feed>
+
+<span class="byline author vcard">Posted by <span class="fn">Andrew Emil</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-08-22T15:58:42-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>3:58 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/" data-via="" data-counturl="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+<li class="post">
+<a href="https://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/" title="Offensive Security Certified Professional"><img src="/images/oscp.png"  alt="Offensive Security Certified Professional"/> </a>
+</li>
+</section> 
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/08/22/acid-server-1-walkthrough/">Acid Server: 1 Walkthrough</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/AE_Soos" data-widget-id="635449647071391748">Tweets by @AE_Soos</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+          
+</section>
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Andrew Emil -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'andrewemilsblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/';
+        var disqus_url = 'http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

