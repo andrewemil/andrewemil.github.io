@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ctf | Andrew Emil's blog]]></title>
   <link href="http://andrewemil.github.io/blog/categories/ctf/atom.xml" rel="self"/>
   <link href="http://andrewemil.github.io/"/>
-  <updated>2016-06-04T06:29:48-04:00</updated>
+  <updated>2016-06-05T07:23:40-04:00</updated>
   <id>http://andrewemil.github.io/</id>
   <author>
     <name><![CDATA[Andrew Emil]]></name>
@@ -109,7 +109,7 @@ Linux sidney 4.4.0-21-generic #37-Ubuntu SMP Mon Apr 18 18:33:37 UTC 2016 x86_64
 /usr/bin/perl
 </code></pre>
 
-<p>Since only perl was installed on the target system, my next step was to get interactive shell using <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> which is provided by <a href="http://pentestmonkey.net/">pentestmonkey.net</a></p>
+<p>Then I used the <a href="http://pentestmonkey.net/tools/web-shells/perl-reverse-shell">perl-reverse-shell</a> which is provided by <a href="http://pentestmonkey.net/">pentestmonkey.net</a> to get an interactive shell on the target system.</p>
 
 <p>Basic modifications in the perl reverse shell:</p>
 
