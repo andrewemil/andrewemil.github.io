@@ -4,7 +4,7 @@
   <title><![CDATA[Andrew Emil's blog]]></title>
   <link href="http://andrewemil.github.io/atom.xml" rel="self"/>
   <link href="http://andrewemil.github.io/"/>
-  <updated>2016-06-05T07:23:40-04:00</updated>
+  <updated>2017-10-18T20:16:41+02:00</updated>
   <id>http://andrewemil.github.io/</id>
   <author>
     <name><![CDATA[Andrew Emil]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Sidney: 0.2 Walkthrough]]></title>
-    <link href="http://andrewemil.github.io/blog/2016/06/03/sidney-0-dot-2-walkthrough/"/>
-    <updated>2016-06-03T22:32:43-04:00</updated>
-    <id>http://andrewemil.github.io/blog/2016/06/03/sidney-0-dot-2-walkthrough</id>
+    <link href="http://andrewemil.github.io/blog/2016/06/04/sidney-0-dot-2-walkthrough/"/>
+    <updated>2016-06-04T04:32:43+02:00</updated>
+    <id>http://andrewemil.github.io/blog/2016/06/04/sidney-0-dot-2-walkthrough</id>
     <content type="html"><![CDATA[<p><a href="https://www.vulnhub.com/entry/sidney-02,149/">Sidney: 0.2</a> is a boot2root challenge created by <a href="https://twitter.com/@knightmare2600">knightmare2600</a> and hosted by <a href="https://www.vulnhub.com">vulnhub</a>.</p>
 
 <p>After booting the the VM, I used netdiscover to find its IP Address which was 192.168.2.113 and our machine&rsquo;s one was 192.168.2.112.</p>
@@ -422,9 +422,9 @@ These conditions are fulfilled in Ubuntu 16.04.&rdquo;</em></p>
   
   <entry>
     <title type="html"><![CDATA[Acid Server:1 Walkthrough]]></title>
-    <link href="http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/"/>
-    <updated>2015-08-24T17:16:43-04:00</updated>
-    <id>http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough</id>
+    <link href="http://andrewemil.github.io/blog/2015/08/25/acid-server-1-walkthrough/"/>
+    <updated>2015-08-25T00:16:43+03:00</updated>
+    <id>http://andrewemil.github.io/blog/2015/08/25/acid-server-1-walkthrough</id>
     <content type="html"><![CDATA[<p><a href="https://www.vulnhub.com/entry/acid-server-1,125/">Acid Server</a> is a boot2root challenge built by <a href="https://twitter.com/@m_avinash143">@m_avinash143</a>
 and hosted by <a href="https://www.vulnhub.com/entry/acid-server-1,125/">vulnhub</a>.
 The challenge is completely focused on web exploitation and the end goal is to escalate the privileges to root and capture the flag.</p>

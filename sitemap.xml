@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://andrewemil.github.io/blog/2016/06/03/sidney-0-dot-2-walkthrough/</loc>
-    <lastmod>2016-06-03T22:32:43-04:00</lastmod>
+    <loc>http://andrewemil.github.io/blog/2016/06/04/sidney-0-dot-2-walkthrough/</loc>
+    <lastmod>2016-06-04T04:32:43+02:00</lastmod>
   </url>
   <url>
-    <loc>http://andrewemil.github.io/blog/2015/08/24/acid-server-1-walkthrough/</loc>
-    <lastmod>2015-08-24T17:16:43-04:00</lastmod>
+    <loc>http://andrewemil.github.io/blog/2015/08/25/acid-server-1-walkthrough/</loc>
+    <lastmod>2015-08-25T00:16:43+03:00</lastmod>
   </url>
   <url>
     <loc>http://andrewemil.github.io/blog/archives/</loc>
@@ -28,6 +28,6 @@
   </url>
   <url>
     <loc>http://andrewemil.github.io/images/2015/1/page.html</loc>
-    <lastmod>2015-08-23T16:09:16-04:00</lastmod>
+    <lastmod>2015-08-23T23:09:16+03:00</lastmod>
   </url>
 </urlset>
